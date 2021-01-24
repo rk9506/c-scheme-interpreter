@@ -184,12 +184,3 @@ char *pad_parentheses(char *exp)
 
     return padded;
 }
-
-int main(int argc, char *argv[])
-{
-    char *padded = pad_parentheses("(define f (lambda (x) (+ x 10)))");
-    SchemeListElem *ast = generate_ast(padded);
-    print_elem(ast);
-
-    return 0;
-}

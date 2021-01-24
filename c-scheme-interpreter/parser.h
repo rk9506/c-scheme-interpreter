@@ -11,6 +11,8 @@
 #include <stdlib.h>
 #include <ctype.h>
 
+SchemeListElem *generate_ast(char *exp);
+
 struct SchemeList *parse_list(char *tokens, char **save_ptr);
 void print_list(struct SchemeList *list);
 
