@@ -1,14 +1,16 @@
 #include "parser.h"
 
-
 #define LPAREN '('
 #define RPAREN ')'
+#define DOUBLEQUOTE '"'
+#define BOOL_PREFIX '#'
 #define WHITESPACE " \t\n\v\f\r"
 
-struct SchemeList;
+bool is_number_atom(char *atom);
+bool is_boolean_atom(char *atom);
+bool is_string_atom(char *atom);
 
-typedef struct { char *atom; struct SchemeList *list; } ListElem;
-struct SchemeList { ListElem *car; struct SchemeList *cdr; };
+SchemeAtom *parse_atom(char *atom);
 
 struct SchemeList *the_empty_list()
 {
@@ -20,10 +22,15 @@ bool is_null_list(struct SchemeList *list)
     return list == NULL;
 }
 
-ListElem *generate_ast(char *exp)
+void raise_parse_error(char *message)
+{
+    printf("Parse error: %s\n", message);
+}
+
+SchemeListElem *generate_ast(char *exp)
 {
     char **save_ptr = malloc(sizeof(char*));
-    ListElem *elem = malloc(sizeof(ListElem));
+    SchemeListElem *elem = malloc(sizeof(SchemeListElem));
     elem->atom = NULL;
     elem->list = NULL;
 
@@ -34,23 +41,68 @@ ListElem *generate_ast(char *exp)
         elem->list = parse_list(pch, save_ptr);
     } else
     {
-        elem->atom = pch;
+        elem->atom = parse_atom(pch);
     }
 
     return elem;
 }
 
-struct SchemeList *make_list()
+SchemeAtom *parse_atom(char *token)
 {
-    struct SchemeList *result = malloc(sizeof(struct SchemeList));
-    result->cdr = NULL;
-    ListElem *result_car = malloc(sizeof(ListElem));
-    result_car->atom = NULL;
-    result_car->list = NULL;
+    SchemeAtom *atom = make_atom();
+    SchemePrimitive *prim = make_primitive();
 
-    result->car = result_car;
+    atom->val = prim;
 
-    return result;
+    if (is_number_atom(token))
+    {
+        char *next_non_digit;
+
+        prim->num = strtof(token, &next_non_digit);
+
+        atom->type_tag = SCHEME_NUMBER;
+    } else if (is_boolean_atom(token))
+    {
+        char bool_letter = *(token + 1);
+
+        if (bool_letter == 't')
+            prim->boolean = true;
+        else if (bool_letter == 'f')
+            prim->boolean = false;
+        else raise_parse_error("Invalid boolean");
+
+        atom->type_tag = SCHEME_BOOLEAN;
+    } else if (is_string_atom(token))
+    {
+        prim->str = strtok(token, "\"");
+        atom->type_tag = SCHEME_STRING;
+    } else
+    {
+        // Treat the atom as a symbol
+        prim->sym = token;
+        atom->type_tag = SCHEME_SYMBOL;
+    }
+
+    return atom;
+}
+
+bool is_number_atom(char *atom)
+{
+    char *end;
+
+    strtof(atom, &end);
+
+    return *end == '\0';
+}
+
+bool is_boolean_atom(char *atom)
+{
+    return *atom == BOOL_PREFIX;
+}
+
+bool is_string_atom(char *atom)
+{
+    return *atom == DOUBLEQUOTE && *(atom + strlen(atom) - 1) == DOUBLEQUOTE;
 }
 
 struct SchemeList *parse_list(char *tokens, char **save_ptr)
@@ -60,7 +112,7 @@ struct SchemeList *parse_list(char *tokens, char **save_ptr)
 
     if (tokens == NULL)
     {
-        printf("Error: Did not find closing parenthesis\n");
+        raise_parse_error("Error: Did not find closing parenthesis");
         return NULL;
     }
 
@@ -77,7 +129,7 @@ struct SchemeList *parse_list(char *tokens, char **save_ptr)
         result->car->list = parse_list(tokens, save_ptr);
     } else
     {
-        result->car->atom = tokens;
+        result->car->atom = parse_atom(tokens);
     }
 
 
@@ -133,41 +185,10 @@ char *pad_parentheses(char *exp)
     return padded;
 }
 
-void print_elem(ListElem *elem)
-{
-    if (elem->atom != NULL)
-    {
-        printf("%s", elem->atom);
-    } else
-    {
-        print_list(elem->list);
-    }
-}
-
-void print_list_contents(struct SchemeList *list)
-{
-    print_elem(list->car);
-
-    if (list->cdr != NULL)
-    {
-        printf(" ");
-        print_list_contents(list->cdr);
-    }
-}
-
-void print_list(struct SchemeList *list)
-{
-    if (list == NULL) return;
-
-    printf("(");
-    print_list_contents(list);
-    printf(")");
-}
-
 int main(int argc, char *argv[])
 {
     char *padded = pad_parentheses("(define f (lambda (x) (+ x 10)))");
-    ListElem *ast = generate_ast(padded);
+    SchemeListElem *ast = generate_ast(padded);
     print_elem(ast);
 
     return 0;
