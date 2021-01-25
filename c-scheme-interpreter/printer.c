@@ -5,6 +5,7 @@ void print_string(SchemeString str);
 void print_number(SchemeNumber num);
 void print_boolean(SchemeBoolean boolean);
 void print_symbol(SchemeSymbol sym);
+void print_list(struct SchemeList *list);
 
 void print_elem(SchemeListElem *elem)
 {

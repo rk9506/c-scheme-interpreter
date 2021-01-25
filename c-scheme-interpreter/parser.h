@@ -14,6 +14,5 @@
 SchemeListElem *generate_ast(char *exp);
 
 struct SchemeList *parse_list(char *tokens, char **save_ptr);
-void print_list(struct SchemeList *list);
 
 #endif // __PARSER_H_

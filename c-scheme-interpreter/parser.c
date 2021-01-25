@@ -74,7 +74,9 @@ SchemeAtom *parse_atom(char *token)
         atom->type_tag = SCHEME_BOOLEAN;
     } else if (is_string_atom(token))
     {
-        prim->str = strtok(token, "\"");
+        char *token_copy = malloc(sizeof(char) * (strlen(token) + 1));
+        strcpy(token_copy, token);
+        prim->str = strtok(token_copy, "\"");
         atom->type_tag = SCHEME_STRING;
     } else
     {
