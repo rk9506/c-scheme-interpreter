@@ -18,6 +18,7 @@ void ev_self_eval();
 void ev_variable();
 void ev_definition();
 void ev_assignment();
+void ev_quoted();
 
 // Used in repl.c
 void initialise_regs()
@@ -37,7 +38,6 @@ SchemeListElem *eval_exp(SchemeListElem *exp)
     return regs->val;
 }
 
-// TODO: Quoted expressions
 void eval_dispatch()
 {
     if (is_self_evaluating(regs->exp))
@@ -46,6 +46,9 @@ void eval_dispatch()
     } else if (is_variable(regs->exp))
     {
         ev_variable();
+    } else if (is_quoted(regs->exp))
+    {
+        ev_quoted();
     } else if (is_definition(regs->exp))
     {
         ev_definition();
@@ -63,6 +66,11 @@ void ev_self_eval()
 void ev_variable()
 {
     regs->val = lookup_variable_value(regs->exp->atom->val->sym, regs->env);
+}
+
+void ev_quoted()
+{
+    regs->val = text_of_quotation(regs->exp);
 }
 
 void ev_definition()

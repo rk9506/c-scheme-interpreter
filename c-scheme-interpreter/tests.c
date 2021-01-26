@@ -41,9 +41,15 @@ void run_all_tests()
 void test_self_evaluating()
 {
     run_test("should evaluate numbers", "2500", "2500");
-    run_test("should evaluate strings", "\"Hello\"", "\"Hello\"");
+    run_test("should evaluate strings", "\"Hello world\"", "\"Hello world\"");
     run_test("should evaluate true", "#t", "#t");
     run_test("should evaluate false", "#f", "#f");
+}
+
+void test_quoted()
+{
+    run_test("should evaluate quoted symbols", "(quote sym)", "sym");
+    run_test("should evaluate quoted lists", "(quote (define a 1))", "(define a 2)");
 }
 
 void run_test(char *title, char *input, char *expected)

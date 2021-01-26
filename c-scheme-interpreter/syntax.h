@@ -10,6 +10,9 @@
 bool is_self_evaluating(SchemeListElem *elem);
 bool is_variable(SchemeListElem *elem);
 
+bool is_quoted(SchemeListElem *exp);
+SchemeListElem *text_of_quotation(SchemeListElem *exp);
+
 bool is_definition(SchemeListElem *elem);
 SchemeListElem *definition_variable(SchemeListElem *exp);
 SchemeListElem *definition_value(SchemeListElem *exp);

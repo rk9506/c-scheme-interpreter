@@ -45,6 +45,16 @@ bool is_tagged_list(SchemeListElem *elem, char *tag)
     return false;
 }
 
+bool is_quoted(SchemeListElem *exp)
+{
+    return is_tagged_list(exp, "quote");
+}
+
+SchemeListElem *text_of_quotation(SchemeListElem *exp)
+{
+    return exp->list->cdr->car;
+}
+
 bool is_definition(SchemeListElem *exp)
 {
     return is_tagged_list(exp, "define");
