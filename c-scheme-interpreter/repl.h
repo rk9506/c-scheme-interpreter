@@ -4,6 +4,7 @@
 #include "parser.h"
 #include "printer.h"
 #include "eval.h"
+#include "env.h"
 
 #include <stdio.h>
 

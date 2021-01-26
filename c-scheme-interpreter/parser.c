@@ -10,6 +10,8 @@ bool is_number_atom(char *atom);
 bool is_boolean_atom(char *atom);
 bool is_string_atom(char *atom);
 
+char *pad_parentheses(char *exp);
+
 SchemeAtom *parse_atom(char *atom);
 
 struct SchemeList *the_empty_list()
@@ -33,6 +35,9 @@ SchemeListElem *generate_ast(char *exp)
     SchemeListElem *elem = malloc(sizeof(SchemeListElem));
     elem->atom = NULL;
     elem->list = NULL;
+
+
+    exp = pad_parentheses(exp);
 
     char *pch = strtok_r(exp, WHITESPACE, save_ptr);
 

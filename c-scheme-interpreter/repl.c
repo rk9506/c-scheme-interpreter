@@ -1,37 +1,44 @@
 #include "repl.h"
 
+#define INPUT_BUFFER_SIZE 1024 * 1024
+
 #define INPUT_PROMPT ";;; C-Scheme input:\n"
 #define RESULT_ANNOUNCEMENT ";;; C-Scheme value:\n"
 
-void start_repl();
-void repl();
+int start_repl();
+int repl();
 
 int main()
 {
-    start_repl();
+    return start_repl();
 }
 
-void start_repl()
+int start_repl()
 {
+    setup_global_environment();
     initialise_regs();
+    initialise_env();
+
     // initialise_stack();
-    repl();
+    return repl();
 }
 
-void repl()
+int repl()
 {
-    char exp[1024 * 1024];
+    char exp[INPUT_BUFFER_SIZE];
     printf(INPUT_PROMPT);
-    scanf("%s", exp);
+    fgets(exp, INPUT_BUFFER_SIZE, stdin);
     printf("\n");
 
     SchemeListElem *ast = generate_ast(exp);
     SchemeListElem *result = eval_exp(ast);
+
+    if (result == NULL) return 1;
 
     printf(RESULT_ANNOUNCEMENT);
     print_elem(result);
     printf("\n");
     printf("\n");
 
-    repl();
+    return repl();
 }
