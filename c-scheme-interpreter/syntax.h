@@ -21,4 +21,11 @@ bool is_assignment(SchemeListElem *exp);
 SchemeListElem *assignment_variable(SchemeListElem *exp);
 SchemeListElem *assignment_value(SchemeListElem *exp);
 
+bool is_begin(SchemeListElem *exp);
+struct SchemeList *begin_actions(SchemeListElem *exp);
+SchemeListElem *first_exp(struct SchemeList *exps);
+struct SchemeList *rest_exps(struct SchemeList *exps);
+bool is_last_exp(struct SchemeList *exps);
+
+
 #endif // __SYNTAX_H_

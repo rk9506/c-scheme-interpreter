@@ -101,3 +101,28 @@ SchemeListElem *assignment_value(SchemeListElem *exp)
 {
     return exp->list->cdr->cdr->car;
 }
+
+bool is_begin(SchemeListElem *exp)
+{
+    return is_tagged_list(exp, "begin");
+}
+
+struct SchemeList *begin_actions(SchemeListElem *exp)
+{
+    return exp->list->cdr;
+}
+
+SchemeListElem *first_exp(struct SchemeList *exps)
+{
+    return exps->car;
+}
+
+struct SchemeList *rest_exps(struct SchemeList *exps)
+{
+    return exps->cdr;
+}
+
+bool is_last_exp(struct SchemeList *exps)
+{
+    return exps->cdr == NULL;
+}

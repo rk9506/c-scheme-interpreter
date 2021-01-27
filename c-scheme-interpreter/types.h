@@ -40,6 +40,10 @@ SchemeAtom *make_atom();
 SchemePrimitive *make_primitive();
 SchemeListElem *make_symbol(char *sym);
 
+void free_list(struct SchemeList *list);
+void free_elem(SchemeListElem *elem);
+void free_atom(SchemeAtom *atom);
+
 unsigned int list_length(struct SchemeList *l);
 
 #endif // __TYPES_H_

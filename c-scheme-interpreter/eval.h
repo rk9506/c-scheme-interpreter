@@ -6,6 +6,9 @@
 
 void initialise_regs();
 void initialise_env();
+void initialise_eval();
+
+void free_regs();
 
 SchemeListElem *eval_exp(SchemeListElem *exp);
 

@@ -15,10 +15,7 @@ int main()
 
 int start_repl()
 {
-    setup_global_environment();
-    initialise_regs();
-    initialise_env();
-
+    initialise_eval();
     // initialise_stack();
     return repl();
 }

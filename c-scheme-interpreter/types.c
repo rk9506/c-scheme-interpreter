@@ -11,6 +11,14 @@ struct SchemeList *make_list()
     return result;
 }
 
+void free_list(struct SchemeList *list)
+{
+    if (list == NULL) return;
+
+    free_elem(list->car);
+    free_list(list->cdr);
+}
+
 SchemeListElem *make_elem()
 {
     SchemeListElem *result = malloc(sizeof(SchemeListElem));
@@ -20,9 +28,23 @@ SchemeListElem *make_elem()
     return result;
 }
 
+void free_elem(SchemeListElem *elem)
+{
+    if (elem == NULL) return;
+    free_list(elem->list);
+    free_atom(elem->atom);
+    free(elem);
+}
+
 SchemeAtom *make_atom()
 {
     return malloc(sizeof(SchemeAtom));
+}
+
+void free_atom(SchemeAtom *atom)
+{
+    if (atom == NULL) return;
+    free(atom);
 }
 
 SchemePrimitive *make_primitive()

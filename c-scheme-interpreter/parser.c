@@ -86,7 +86,7 @@ SchemeAtom *parse_atom(char *token)
     } else
     {
         // Treat the atom as a symbol
-        prim->sym = token;
+        prim->sym = strdup(token);
         atom->type_tag = SCHEME_SYMBOL;
     }
 
