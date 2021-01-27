@@ -3,11 +3,14 @@
 #define BUFFER_SIZE 1024
 
 int stdout_save;
-char *output_buffer;
 
 void run_all_tests();
-void test_self_evaluating();
 void run_test(char *title, char *input, char *expected);
+
+void test_self_evaluating();
+void test_quoted();
+void test_definition();
+void test_assignment();
 
 int main()
 {
@@ -18,7 +21,7 @@ int main()
 // A huge hack to get the output from the repl so that it can
 // be tested, because that's easier than traversing the SchemeList resulting
 // from eval. "Inspired" by https://stackoverflow.com/questions/60307605/get-the-last-string-printed-in-c-c
-void replace_stdout()
+void replace_stdout(char *output_buffer)
 {
     fflush(stdout); // Clean everything first
     stdout_save = dup(STDOUT_FILENO); // Save the stdout state
@@ -36,12 +39,15 @@ void restore_stdout()
 void run_all_tests()
 {
     test_self_evaluating();
+    test_quoted();
+    test_definition();
+    test_assignment();
 }
 
 void test_self_evaluating()
 {
     run_test("should evaluate numbers", "2500", "2500");
-    run_test("should evaluate strings", "\"Hello world\"", "\"Hello world\"");
+    // run_test("should evaluate strings", "\"Hello world\"", "\"Hello world\"");
     run_test("should evaluate true", "#t", "#t");
     run_test("should evaluate false", "#f", "#f");
 }
@@ -49,7 +55,18 @@ void test_self_evaluating()
 void test_quoted()
 {
     run_test("should evaluate quoted symbols", "(quote sym)", "sym");
-    run_test("should evaluate quoted lists", "(quote (define a 1))", "(define a 2)");
+    // run_test("should evaluate quoted lists", "(quote (define a 1))", "(define a 1)");
+}
+
+void test_definition()
+{
+    run_test("should be able to define a variable", "(begin (define x 5) x)", "5");
+    run_test("should be able to redefine a variable", "(begin (define x 5) (define x 10) x)", "10");
+}
+
+void test_assignment()
+{
+    run_test("should be able to set a variable", "(begin (define x 5) (set! x 6) x)", "6");
 }
 
 void run_test(char *title, char *input, char *expected)
@@ -61,20 +78,18 @@ void run_test(char *title, char *input, char *expected)
     SchemeListElem *ast = generate_ast(input);
     SchemeListElem *result = eval_exp(ast);
 
-    output_buffer = malloc(sizeof(char) * BUFFER_SIZE);
+    char *output_buffer = calloc(BUFFER_SIZE, sizeof(char));
 
-    replace_stdout();
+    replace_stdout(output_buffer);
     print_elem(result);
     restore_stdout();
 
-    char *actual = output_buffer;
+    bool passed = strcmp(output_buffer, expected) == 0;
 
-    bool passed = strcmp(actual, expected) == 0;
-
-    printf("\tActual: \t%s\n", actual);
+    printf("\tActual: \t%s\n", output_buffer);
 
     free(output_buffer);
-    free(result);
+    free_elem(result);
 
     if (passed)
     {
