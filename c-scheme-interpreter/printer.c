@@ -5,6 +5,7 @@ void print_string(SchemeString str);
 void print_number(SchemeNumber num);
 void print_boolean(SchemeBoolean boolean);
 void print_symbol(SchemeSymbol sym);
+void print_procedure(SchemeProcedure *proc);
 void print_list(struct SchemeList *list);
 
 void print_elem(SchemeListElem *elem)
@@ -37,6 +38,14 @@ void print_atom(SchemeAtom *atom)
         case SCHEME_SYMBOL:
             print_symbol(atom->val->sym);
             break;
+
+        case SCHEME_PROCEDURE:
+            print_procedure(atom->val->proc);
+            break;
+
+        case PRIMITIVE_PROCEDURE:
+            printf("<primitive-procedure>");
+            break;
     }
 }
 
@@ -65,6 +74,13 @@ void print_boolean(SchemeBoolean boolean)
 void print_symbol(SchemeSymbol sym)
 {
     printf("%s", sym);
+}
+
+void print_procedure(SchemeProcedure *proc)
+{
+    printf("<procedure ");
+    print_list(proc->body);
+    printf(">");
 }
 
 void print_list_contents(struct SchemeList *list)

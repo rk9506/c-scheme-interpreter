@@ -13,6 +13,10 @@ bool is_variable(SchemeListElem *elem);
 bool is_quoted(SchemeListElem *exp);
 SchemeListElem *text_of_quotation(SchemeListElem *exp);
 
+bool is_lambda(SchemeListElem *exp);
+struct SchemeList *lambda_parameters(SchemeListElem *exp);
+struct SchemeList *lambda_body(SchemeListElem *exp);
+
 bool is_definition(SchemeListElem *elem);
 SchemeListElem *definition_variable(SchemeListElem *exp);
 SchemeListElem *definition_value(SchemeListElem *exp);
@@ -27,5 +31,13 @@ SchemeListElem *first_exp(struct SchemeList *exps);
 struct SchemeList *rest_exps(struct SchemeList *exps);
 bool is_last_exp(struct SchemeList *exps);
 
+
+bool is_application(SchemeListElem *exp);
+SchemeListElem *operator(SchemeListElem *exp);
+struct SchemeList *operands(SchemeListElem *exp);
+bool has_no_operands(struct SchemeList *operands);
+bool is_last_operand(struct SchemeList *operands);
+SchemeListElem *first_operand(struct SchemeList *operands);
+struct SchemeList *rest_operands(struct SchemeList *operands);
 
 #endif // __SYNTAX_H_

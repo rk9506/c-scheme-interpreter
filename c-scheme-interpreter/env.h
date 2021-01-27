@@ -3,6 +3,7 @@
 
 #include "types.h"
 #include "hash_table.h"
+#include "primitive_procedures.h"
 
 #include <stdio.h>
 

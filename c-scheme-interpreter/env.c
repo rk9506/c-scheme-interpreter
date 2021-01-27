@@ -86,6 +86,11 @@ struct Environment *extend_environment(struct SchemeList *vars, struct SchemeLis
     return NULL;
 }
 
+void add_primitive_procedures()
+{
+    define_variable("+", make_primitive_procedure(&primitive_add), the_global_environment);
+}
+
 struct Environment *get_empty_environment()
 {
     return NULL;
@@ -94,4 +99,5 @@ struct Environment *get_empty_environment()
 void setup_global_environment()
 {
     the_global_environment = make_environment();
+    add_primitive_procedures();
 }

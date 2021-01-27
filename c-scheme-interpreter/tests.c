@@ -11,6 +11,7 @@ void test_self_evaluating();
 void test_quoted();
 void test_definition();
 void test_assignment();
+void test_primitive_procedures();
 
 int main()
 {
@@ -42,6 +43,7 @@ void run_all_tests()
     test_quoted();
     test_definition();
     test_assignment();
+    test_primitive_procedures();
 }
 
 void test_self_evaluating()
@@ -55,7 +57,7 @@ void test_self_evaluating()
 void test_quoted()
 {
     run_test("should evaluate quoted symbols", "(quote sym)", "sym");
-    // run_test("should evaluate quoted lists", "(quote (define a 1))", "(define a 1)");
+    run_test("should evaluate quoted lists", "(quote (define a 1))", "(define a 1)");
 }
 
 void test_definition()
@@ -67,6 +69,11 @@ void test_definition()
 void test_assignment()
 {
     run_test("should be able to set a variable", "(begin (define x 5) (set! x 6) x)", "6");
+}
+
+void test_primitive_procedures()
+{
+    run_test("should be able to add with +", "(+ 1 2)", "3");
 }
 
 void run_test(char *title, char *input, char *expected)

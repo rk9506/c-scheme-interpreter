@@ -55,6 +55,21 @@ SchemeListElem *text_of_quotation(SchemeListElem *exp)
     return exp->list->cdr->car;
 }
 
+bool is_lambda(SchemeListElem *exp)
+{
+    return is_tagged_list(exp, "lambda");
+}
+
+struct SchemeList *lambda_parameters(SchemeListElem *exp)
+{
+    return exp->list->cdr->car->list;
+}
+
+struct SchemeList *lambda_body(SchemeListElem *exp)
+{
+    return exp->list->cdr->cdr;
+}
+
 bool is_definition(SchemeListElem *exp)
 {
     return is_tagged_list(exp, "define");
@@ -125,4 +140,39 @@ struct SchemeList *rest_exps(struct SchemeList *exps)
 bool is_last_exp(struct SchemeList *exps)
 {
     return exps->cdr == NULL;
+}
+
+bool is_application(SchemeListElem *exp)
+{
+    return exp->list != NULL;
+}
+
+SchemeListElem *operator(SchemeListElem *exp)
+{
+    return exp->list->car;
+}
+
+struct SchemeList *operands(SchemeListElem *exp)
+{
+    return exp->list->cdr;
+}
+
+bool has_no_operands(struct SchemeList *operands)
+{
+    return operands == NULL;
+}
+
+bool is_last_operand(struct SchemeList *operands)
+{
+    return operands->cdr == NULL;
+}
+
+SchemeListElem *first_operand(struct SchemeList *operands)
+{
+    return operands->car;
+}
+
+struct SchemeList *rest_operands(struct SchemeList *operands)
+{
+    return operands->cdr;
 }
