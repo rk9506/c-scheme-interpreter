@@ -10,10 +10,12 @@ void print_list(struct SchemeList *list);
 
 void print_elem(SchemeListElem *elem)
 {
+    if (elem == NULL) return;
+
     if (elem->atom != NULL)
     {
         print_atom(elem->atom);
-    } else
+    } else if (elem->list != NULL)
     {
         print_list(elem->list);
     }

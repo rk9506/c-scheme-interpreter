@@ -22,5 +22,6 @@ HashTable *make_table();
 void free_table(HashTable *table);
 struct TableEntry *lookup(char *key, HashTable *table);
 struct TableEntry *insert(char *key, void *value, HashTable *table);
+void print_table(HashTable *table);
 
 #endif // __HASH_TABLE_H_

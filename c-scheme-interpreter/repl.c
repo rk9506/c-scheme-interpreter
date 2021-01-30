@@ -20,9 +20,19 @@ int start_repl()
     return repl();
 }
 
+void initialise_buffer(char *exp)
+{
+    char c;
+    for (c = *exp; c != '\0'; exp++)
+    {
+        *exp = '\0';
+    }
+}
+
 int repl()
 {
     char exp[INPUT_BUFFER_SIZE];
+    // initialise_buffer(exp);
     printf(INPUT_PROMPT);
     fgets(exp, INPUT_BUFFER_SIZE, stdin);
     printf("\n");
@@ -36,6 +46,9 @@ int repl()
     print_elem(result);
     printf("\n");
     printf("\n");
+    initialise_env();
+
+    debug_log_env(get_global_environment());
 
     return repl();
 }

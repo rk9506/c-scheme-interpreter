@@ -13,6 +13,8 @@ typedef struct
 
 static Registers *regs;
 
+static Stack *the_stack;
+
 void eval_dispatch();
 void ev_self_eval();
 void ev_variable();
@@ -27,6 +29,7 @@ void ev_application();
 void ev_appl_operand_loop();
 void apply_dispatch();
 void primitive_apply();
+void compound_apply();
 
 // Used in repl.c
 void initialise_regs()
@@ -61,7 +64,6 @@ void free_regs()
 
 SchemeListElem *eval_exp(SchemeListElem *exp)
 {
-    initialise_eval();
     regs->exp = exp;
     eval_dispatch();
     return regs->val;
@@ -156,13 +158,12 @@ void ev_application()
         apply_dispatch();
     } else
     {
-        ev_appl_operand_loop();
+        ev_appl_operand_loop(regs->proc);
     }
 }
 
-void ev_appl_operand_loop()
+void ev_appl_operand_loop(SchemeListElem *proc)
 {
-    SchemeListElem *proc = regs->proc;
     struct SchemeList *argl = regs->argl;
 
     regs->exp = first_operand(regs->unev);
@@ -188,20 +189,37 @@ void ev_appl_operand_loop()
     regs->argl = adjoin_arg(regs->val, regs->argl);
     regs->unev = rest_operands(regs->unev);
 
-    ev_appl_operand_loop();
+    ev_appl_operand_loop(proc);
 }
 
 void apply_dispatch()
 {
-    if (regs->proc->atom->type_tag == PRIMITIVE_PROCEDURE)
+    TypeTag type_tag = regs->proc->atom->type_tag;
+
+    if (type_tag == PRIMITIVE_PROCEDURE)
     {
         primitive_apply();
+    } else if (type_tag == SCHEME_PROCEDURE)
+    {
+        compound_apply();
+    } else
+    {
+        printf("Invalid procedure\n");
+        regs->val = NULL;
     }
 }
 
 void primitive_apply()
 {
     regs->val = apply_primitive_procedure(regs->proc, regs->argl);
+}
+
+void compound_apply()
+{
+    regs->unev = regs->proc->atom->val->proc->parameters;
+    regs->env = extend_environment(regs->unev, regs->argl, regs->proc->atom->val->proc->env);
+    regs->unev = regs->proc->atom->val->proc->body;
+    ev_sequence();
 }
 
 void ev_definition()

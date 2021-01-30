@@ -38,9 +38,9 @@ void print_table(HashTable *table)
     int i;
     for (i = 0; i < HASH_SIZE; i++)
     {
-        if (table[i] != 0)
+        if (table[i] != NULL)
         {
-            printf("table entry var %s\n", table[i]->key);
+            if (table[i]->key != NULL) printf("table entry var %s\n", table[i]->key);
         }
     }
 }

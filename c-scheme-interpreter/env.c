@@ -15,14 +15,13 @@ SchemeListElem *lookup_variable_value(char *name, struct Environment *env)
         return NULL;
     }
 
-    struct TableEntry *e = lookup(name, env->bindings);
-
+    struct SchemeList *e = lookup(name, env->bindings);
     if (e == NULL)
     {
         return lookup_variable_value(name, env->enclosing_env);
     }
 
-    return (SchemeListElem*) e->value;
+    return e->cdr->car;
 }
 
 void set_variable_value(char *var, SchemeListElem *val, struct Environment *env)
@@ -33,19 +32,26 @@ void set_variable_value(char *var, SchemeListElem *val, struct Environment *env)
         return;
     }
 
-    struct TableEntry *e = lookup(var, env->bindings);
+    struct SchemeList *e = lookup(var, env->bindings);
 
     if (e == NULL)
     {
         set_variable_value(var, val, env->enclosing_env);
     }
 
-    e->value = val;
+    free_elem(e->cdr->car);
+    e->cdr->car = val;
 }
 
 void define_variable(char *var, SchemeListElem *val, struct Environment *env)
 {
-    insert(var, val, env->bindings);
+    if (lookup(var, env->bindings))
+    {
+        set_variable_value(var, val, env);
+    } else
+    {
+        env->bindings = insert(var, val, env->bindings);
+    }
 }
 
 struct Environment *make_environment()
@@ -65,6 +71,15 @@ void free_environment(struct Environment *env)
     free(env);
 }
 
+void insert_bindings(struct SchemeList *vars, struct SchemeList *vals, struct Environment *env)
+{
+    if (vars == NULL) return;
+
+    define_variable(vars->car->atom->val->sym, vals->car, env);
+
+    insert_bindings(vars->cdr, vals->cdr, env);
+}
+
 struct Environment *extend_environment(struct SchemeList *vars, struct SchemeList *vals, struct Environment *env)
 {
     unsigned int vars_length = list_length(vars);
@@ -74,7 +89,10 @@ struct Environment *extend_environment(struct SchemeList *vars, struct SchemeLis
     {
         struct Environment *new_env = make_environment();
         new_env->enclosing_env = env;
-        return env;
+
+        insert_bindings(vars, vals, env);
+
+        return new_env;
     } else if (vars_length < vals_length)
     {
         printf("Too many arguments supplied\n");
@@ -94,6 +112,15 @@ void add_primitive_procedures()
 struct Environment *get_empty_environment()
 {
     return NULL;
+}
+
+void print_env(struct Environment *env)
+{
+    if (env == NULL) return;
+
+    print_table(env->bindings);
+
+    print_env(env->enclosing_env);
 }
 
 void setup_global_environment()

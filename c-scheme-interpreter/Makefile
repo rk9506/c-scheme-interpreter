@@ -1,6 +1,6 @@
 CC=gcc
 CFLAGS=-I.
-DEPS = eval.c parser.c syntax.c printer.c types.c env.c hash_table.c primitive_procedures.c
+DEPS = eval.c parser.c syntax.c printer.c types.c env.c table.c primitive_procedures.c debug.c
 
 %.o: %.c $(DEPS)
 	$(CC) %.c $(DEPS) -c -o $@ $< $(CFLAGS)

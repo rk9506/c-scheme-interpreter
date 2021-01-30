@@ -7,5 +7,6 @@
 #include <float.h>
 
 void print_elem(SchemeListElem *elem);
+void print_list(struct SchemeList *list);
 
 #endif // __PRINTER_H_
