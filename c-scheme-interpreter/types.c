@@ -1,5 +1,15 @@
 #include "types.h"
 
+struct SchemeList *the_empty_list()
+{
+    return NULL;
+}
+
+bool is_null_list(struct SchemeList *list)
+{
+    return list == NULL;
+}
+
 struct SchemeList *make_list()
 {
     struct SchemeList *result = malloc(sizeof(struct SchemeList));

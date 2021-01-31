@@ -24,6 +24,7 @@ void ev_definition();
 void ev_assignment();
 void ev_begin();
 void ev_sequence();
+void ev_if();
 
 void ev_application();
 void ev_appl_operand_loop();
@@ -102,6 +103,9 @@ void eval_dispatch()
     } else if (is_definition(regs->exp))
     {
         ev_definition();
+    } else if (is_if(regs->exp))
+    {
+        ev_if();
     } else if (is_lambda(regs->exp))
     {
         ev_lambda();
@@ -294,4 +298,40 @@ void ev_sequence()
     regs->unev = rest_exps(unev);
 
     ev_sequence();
+}
+
+bool is_true(SchemeListElem *val)
+{
+    if (val->atom->type_tag == SCHEME_BOOLEAN)
+    {
+        return val->atom->val->boolean;
+    } else
+    {
+        return true;
+    }
+}
+
+void ev_if()
+{
+    save(regs->exp);
+    save(regs->env);
+
+    regs->exp = if_predicate(regs->exp);
+
+    eval_dispatch();
+
+    // ev-if-decide
+    regs->env = restore();
+    regs->exp = restore();
+
+    if (is_true(regs->val))
+    {
+        // ev-if-consequent
+        regs->exp = if_consequent(regs->exp);
+    } else
+    {
+        regs->exp = if_alternative(regs->exp);
+    }
+
+    eval_dispatch();
 }

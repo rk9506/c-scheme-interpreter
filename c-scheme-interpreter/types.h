@@ -52,6 +52,9 @@ typedef struct
 typedef struct scheme_list_elem_t { SchemeAtom *atom; struct SchemeList *list; } SchemeListElem;
 struct SchemeList { SchemeListElem *car; struct SchemeList *cdr; };
 
+struct SchemeList *the_empty_list();
+bool is_null_list(struct SchemeList *list);
+
 SchemeListElem *make_elem();
 struct SchemeList *make_list();
 SchemeAtom *make_atom();

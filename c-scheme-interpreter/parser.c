@@ -15,16 +15,6 @@ char *pad_parentheses(char *exp);
 SchemeAtom *parse_atom(char *atom, char **save_ptr);
 void parse_string(char *token, SchemeAtom *atom, char **save_ptr);
 
-struct SchemeList *the_empty_list()
-{
-    return NULL;
-}
-
-bool is_null_list(struct SchemeList *list)
-{
-    return list == NULL;
-}
-
 void raise_parse_error(char *message)
 {
     printf("Parse error: %s\n", message);

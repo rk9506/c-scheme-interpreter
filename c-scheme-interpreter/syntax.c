@@ -190,3 +190,30 @@ struct SchemeList *rest_operands(struct SchemeList *operands)
 {
     return operands->cdr;
 }
+
+bool is_if(SchemeListElem *exp)
+{
+    return is_tagged_list(exp, "if");
+}
+
+SchemeListElem *if_predicate(SchemeListElem *exp)
+{
+    return exp->list->cdr->car;
+}
+
+SchemeListElem *if_consequent(SchemeListElem *exp)
+{
+    return exp->list->cdr->cdr->car;
+}
+
+SchemeListElem *if_alternative(SchemeListElem *exp)
+{
+    struct SchemeList *cdddr = exp->list->cdr->cdr->cdr;
+    if (!is_null_list(cdddr))
+    {
+        return cdddr->car;
+    } else
+    {
+        return make_symbol("false");
+    }
+}

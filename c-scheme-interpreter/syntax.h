@@ -31,7 +31,6 @@ SchemeListElem *first_exp(struct SchemeList *exps);
 struct SchemeList *rest_exps(struct SchemeList *exps);
 bool is_last_exp(struct SchemeList *exps);
 
-
 bool is_application(SchemeListElem *exp);
 SchemeListElem *operator(SchemeListElem *exp);
 struct SchemeList *operands(SchemeListElem *exp);
@@ -39,5 +38,10 @@ bool has_no_operands(struct SchemeList *operands);
 bool is_last_operand(struct SchemeList *operands);
 SchemeListElem *first_operand(struct SchemeList *operands);
 struct SchemeList *rest_operands(struct SchemeList *operands);
+
+bool is_if(SchemeListElem *exp);
+SchemeListElem *if_predicate(SchemeListElem *exp);
+SchemeListElem *if_consequent(SchemeListElem *exp);
+SchemeListElem *if_alternative(SchemeListElem *exp);
 
 #endif // __SYNTAX_H_
