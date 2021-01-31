@@ -31,6 +31,16 @@ void apply_dispatch();
 void primitive_apply();
 void compound_apply();
 
+void save(void *val)
+{
+    push(val, the_stack);
+}
+
+void *restore()
+{
+    return pop(the_stack);
+}
+
 // Used in repl.c
 void initialise_regs()
 {
@@ -48,11 +58,17 @@ void initialise_env()
     regs->env = get_global_environment();
 }
 
+void initialise_stack()
+{
+    the_stack = make_stack();
+}
+
 void initialise_eval()
 {
     setup_global_environment();
     initialise_regs();
     initialise_env();
+    initialise_stack();
 }
 
 void free_regs()
@@ -141,15 +157,20 @@ struct SchemeList *adjoin_arg(SchemeListElem *arg, struct SchemeList *arglist)
 
 void ev_application()
 {
-    struct Environment *env = regs->env;
+    save(regs->env);
     regs->unev = operands(regs->exp);
-    struct SchemeList *unev = regs->unev;
+    save(regs->unev);
     regs->exp = operator(regs->exp);
+
+    printf("operands: ");
+    print_list(regs->unev);
+    printf("\n");
 
     eval_dispatch();
 
-    regs->unev = unev;
-    regs->env = env;
+    // ev-appl-did-operator
+    regs->unev = restore();
+    regs->env = restore();
     regs->argl = empty_arglist();
     regs->proc = regs->val;
 
@@ -158,38 +179,43 @@ void ev_application()
         apply_dispatch();
     } else
     {
-        ev_appl_operand_loop(regs->proc);
+        save(regs->proc);
+        ev_appl_operand_loop();
     }
 }
 
-void ev_appl_operand_loop(SchemeListElem *proc)
+void ev_appl_operand_loop()
 {
-    struct SchemeList *argl = regs->argl;
+    save(regs->argl);
 
     regs->exp = first_operand(regs->unev);
 
     if (is_last_operand(regs->unev))
     {
+        // ev-appl-last-arg
         eval_dispatch();
-        regs->argl = adjoin_arg(regs->val, argl);
-        regs->proc = proc;
+        // ev-appl-accum-last-arg
+        regs->argl = restore();
+        regs->argl = adjoin_arg(regs->val, regs->argl);
+        regs->proc = restore();
         apply_dispatch();
         return;
     }
 
-    struct Environment *env = regs->env;
-    struct SchemeList *unev = regs->unev;
+    save(regs->env);
+    save(regs->unev);
 
     eval_dispatch();
 
-    regs->unev = unev;
-    regs->env = env;
-    regs->argl = argl;
+    // ev-appl-accumulate-arg
+    regs->unev = restore();
+    regs->env = restore();
+    regs->argl = restore();
 
     regs->argl = adjoin_arg(regs->val, regs->argl);
     regs->unev = rest_operands(regs->unev);
 
-    ev_appl_operand_loop(proc);
+    ev_appl_operand_loop();
 }
 
 void apply_dispatch()

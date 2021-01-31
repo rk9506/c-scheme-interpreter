@@ -104,9 +104,31 @@ struct Environment *extend_environment(struct SchemeList *vars, struct SchemeLis
     return NULL;
 }
 
+void define_primitive(char *symbol, PrimitiveProcedure proc)
+{
+    define_variable(symbol, make_primitive_procedure(proc), the_global_environment);
+}
+
 void add_primitive_procedures()
 {
-    define_variable("+", make_primitive_procedure(&primitive_add), the_global_environment);
+    // Arithmetic operators
+    define_primitive("+", &primitive_add);
+    define_primitive("-", &primitive_subtract);
+    define_primitive("*", &primitive_multiply);
+    define_primitive("/", &primitive_divide);
+    define_primitive("%", &primitive_remainder);
+
+    // Comparison operators
+    define_primitive("=", &primitive_number_equality);
+    define_primitive("<", &primitive_lt);
+    define_primitive("<=", &primitive_lte);
+    define_primitive(">", &primitive_gt);
+    define_primitive(">=", &primitive_gte);
+
+    // Boolean operators
+    define_primitive("and", &primitive_and);
+    define_primitive("or", &primitive_or);
+    define_primitive("not", &primitive_not);
 }
 
 struct Environment *get_empty_environment()
