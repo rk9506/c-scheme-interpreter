@@ -98,7 +98,7 @@ void test_compound_procedures()
              "(begin \
                  (define apply-twice (lambda (f x) (f (f x)))) \
                  (define inc (lambda (x) (+ x 1))) \
-                 (apply-twice inc 5))"
+                 (apply-twice inc 5))",
              "7");
 
     run_test("should be able to create list structure using procedures",
@@ -106,7 +106,7 @@ void test_compound_procedures()
                 (define cons (lambda (x y) (lambda (m) (m x y)))) \
                 (define car (lambda (p) (p (lambda (x y) x)))) \
                 (define cdr (lambda (p) (p (lambda (x y) y)))) \
-                (define l (cons 1 (cons 2 (cons 3 (quote ())))))) \
+                (define l (cons 1 (cons 2 (cons 3 0)))) \
                 (car (cdr (cdr l)))",
              "3");
 }

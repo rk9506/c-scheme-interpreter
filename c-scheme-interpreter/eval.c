@@ -162,10 +162,6 @@ void ev_application()
     save(regs->unev);
     regs->exp = operator(regs->exp);
 
-    printf("operands: ");
-    print_list(regs->unev);
-    printf("\n");
-
     eval_dispatch();
 
     // ev-appl-did-operator

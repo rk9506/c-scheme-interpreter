@@ -12,7 +12,8 @@ bool is_string_atom(char *atom);
 
 char *pad_parentheses(char *exp);
 
-SchemeAtom *parse_atom(char *atom);
+SchemeAtom *parse_atom(char *atom, char **save_ptr);
+void parse_string(char *token, SchemeAtom *atom, char **save_ptr);
 
 struct SchemeList *the_empty_list()
 {
@@ -46,13 +47,13 @@ SchemeListElem *generate_ast(char *exp)
         elem->list = parse_list(pch, save_ptr);
     } else
     {
-        elem->atom = parse_atom(pch);
+        elem->atom = parse_atom(pch, save_ptr);
     }
 
     return elem;
 }
 
-SchemeAtom *parse_atom(char *token)
+SchemeAtom *parse_atom(char *token, char **save_ptr)
 {
     SchemeAtom *atom = make_atom();
     SchemePrimitive *prim = make_primitive();
@@ -79,10 +80,7 @@ SchemeAtom *parse_atom(char *token)
         atom->type_tag = SCHEME_BOOLEAN;
     } else if (is_string_atom(token))
     {
-        char *token_copy = malloc(sizeof(char) * (strlen(token) + 1));
-        strcpy(token_copy, token);
-        prim->str = strtok(token_copy, "\"");
-        atom->type_tag = SCHEME_STRING;
+        parse_string(token, atom, save_ptr);
     } else
     {
         // Treat the atom as a symbol
@@ -91,6 +89,45 @@ SchemeAtom *parse_atom(char *token)
     }
 
     return atom;
+}
+
+void parse_string(char *token, SchemeAtom *atom, char **save_ptr)
+{
+    printf("token %s\n", token);
+    // token = strtok_r(NULL, WHITESPACE, save_ptr);
+    atom->val->str = calloc(1, sizeof(char));
+    atom->type_tag = SCHEME_STRING;
+
+    //.Right now, token points at "
+    token++;
+
+    // Token points at start of string
+    int token_len = strlen(token);
+    char *new_str;
+
+    while (token[token_len - 1] != DOUBLEQUOTE)
+    {
+        // +2: +1 for a space character, +1 for null terminator
+        new_str = calloc(strlen(atom->val->str), token_len + 2);
+
+        strcpy(new_str, atom->val->str);
+
+        free(atom->val->str);
+
+        strcat(new_str, token);
+        new_str[strlen(new_str)] = ' ';
+
+        atom->val->str = new_str;
+
+        token = strtok_r(NULL, WHITESPACE, save_ptr);
+        token_len = strlen(token);
+    }
+
+    new_str = calloc(strlen(atom->val->str), token_len);
+    strcpy(new_str, atom->val->str);
+    strncat(new_str, token, token_len - 1);
+    free(atom->val->str);
+    atom->val->str = new_str;
 }
 
 bool is_number_atom(char *atom)
@@ -109,7 +146,7 @@ bool is_boolean_atom(char *atom)
 
 bool is_string_atom(char *atom)
 {
-    return *atom == DOUBLEQUOTE && *(atom + strlen(atom) - 1) == DOUBLEQUOTE;
+    return *atom == DOUBLEQUOTE;
 }
 
 struct SchemeList *parse_list(char *tokens, char **save_ptr)
@@ -136,7 +173,7 @@ struct SchemeList *parse_list(char *tokens, char **save_ptr)
         result->car->list = parse_list(tokens, save_ptr);
     } else
     {
-        result->car->atom = parse_atom(tokens);
+        result->car->atom = parse_atom(tokens, save_ptr);
     }
 
 
