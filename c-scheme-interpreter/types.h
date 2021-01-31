@@ -56,6 +56,7 @@ struct SchemeList *make_list();
 SchemeAtom *make_atom();
 SchemePrimitive *make_primitive();
 SchemeListElem *make_number(float num);
+SchemeListElem *make_boolean(bool boolean);
 SchemeListElem *make_symbol(char *sym);
 SchemeListElem *make_procedure(struct SchemeList *parameters,
                                struct SchemeList *body,

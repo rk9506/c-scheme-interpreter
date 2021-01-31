@@ -7,5 +7,9 @@ void debug_log(char *message)
 
 void debug_log_env(struct Environment *env)
 {
-    if (DEBUGGING) print_list(env->bindings);
+    if (DEBUGGING)
+    {
+        print_list(env->bindings);
+        printf("\n");
+    }
 }

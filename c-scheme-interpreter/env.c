@@ -90,7 +90,7 @@ struct Environment *extend_environment(struct SchemeList *vars, struct SchemeLis
         struct Environment *new_env = make_environment();
         new_env->enclosing_env = env;
 
-        insert_bindings(vars, vals, env);
+        insert_bindings(vars, vals, new_env);
 
         return new_env;
     } else if (vars_length < vals_length)

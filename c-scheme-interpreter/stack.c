@@ -3,7 +3,7 @@
 Stack *make_stack()
 {
     Stack *s = malloc(sizeof(Stack));
-    s->top = 0;
+    s->top = -1;
     s->items = malloc(sizeof(void*) * STACK_SIZE);
 
     return s;
@@ -11,7 +11,7 @@ Stack *make_stack()
 
 bool is_empty(Stack *stack)
 {
-    return stack->top == 00;
+    return stack->top == -1;
 }
 
 void push(void *item, Stack *stack)
@@ -22,6 +22,12 @@ void push(void *item, Stack *stack)
 
 void *pop(Stack *stack)
 {
+    if (is_empty(stack))
+    {
+        printf("Trying to pop from an empty stack!\n");
+        return NULL;
+    }
+
     void *item = stack->items[stack->top];
     stack->top--;
 

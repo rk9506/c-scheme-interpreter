@@ -64,6 +64,19 @@ SchemeListElem *make_number(float num)
     return elem;
 }
 
+SchemeListElem *make_boolean(bool boolean)
+{
+    SchemeListElem *elem = make_elem();
+    elem->atom = make_atom();
+
+    elem->atom->type_tag = SCHEME_BOOLEAN;
+    elem->atom->val = make_primitive();
+    elem->atom->val->boolean = boolean;
+
+    return elem;
+}
+
+
 SchemeListElem *make_symbol(char *sym)
 {
     SchemeListElem *elem = make_elem();

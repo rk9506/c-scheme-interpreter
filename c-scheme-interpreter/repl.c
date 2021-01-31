@@ -48,6 +48,7 @@ int repl()
     printf("\n");
     initialise_env();
 
+    debug_log("Global env: ");
     debug_log_env(get_global_environment());
 
     return repl();
