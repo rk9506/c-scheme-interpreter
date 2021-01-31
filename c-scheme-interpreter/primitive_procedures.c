@@ -1,5 +1,7 @@
 #include "primitive_procedures.h"
 
+#define INPUT_BUFFER_SIZE 1024 * 1024
+
 SchemeListElem *apply_primitive_procedure(SchemeListElem *proc_elem, struct SchemeList *args)
 {
     PrimitiveProcedure primitive_proc = proc_elem->atom->val->primitive_proc;
@@ -190,4 +192,12 @@ SchemeListElem *primitive_newline(struct SchemeList *args)
     printf("\n");
 
     return make_symbol("ok");
+}
+
+SchemeListElem *primitive_read(struct SchemeList *args)
+{
+    char exp[INPUT_BUFFER_SIZE];
+    fgets(exp, INPUT_BUFFER_SIZE, stdin);
+
+    return generate_ast(exp);
 }

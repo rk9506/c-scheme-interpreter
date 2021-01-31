@@ -133,6 +133,7 @@ void add_primitive_procedures()
     // IO
     define_primitive("display", &primitive_display);
     define_primitive("newline", &primitive_newline);
+    define_primitive("read", &primitive_read);
 }
 
 struct Environment *get_empty_environment()

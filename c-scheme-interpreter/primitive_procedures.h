@@ -2,6 +2,7 @@
 #define __PRIMITIVE_PROCEDURES_H_
 
 #include "types.h"
+#include "parser.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -26,5 +27,6 @@ SchemeListElem *primitive_not(struct SchemeList *args);
 
 SchemeListElem *primitive_display(struct SchemeList *args);
 SchemeListElem *primitive_newline(struct SchemeList *args);
+SchemeListElem *primitive_read(struct SchemeList *args);
 
 #endif // __PRIMITIVE_PROCEDURES_H_
