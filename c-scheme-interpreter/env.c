@@ -129,6 +129,10 @@ void add_primitive_procedures()
     define_primitive("and", &primitive_and);
     define_primitive("or", &primitive_or);
     define_primitive("not", &primitive_not);
+
+    // IO
+    define_primitive("display", &primitive_display);
+    define_primitive("newline", &primitive_newline);
 }
 
 struct Environment *get_empty_environment()

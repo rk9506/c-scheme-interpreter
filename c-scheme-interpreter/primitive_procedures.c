@@ -59,6 +59,20 @@ bool get_boolean_cadr(struct SchemeList *args)
     return atom->val->boolean;
 }
 
+char *get_string_car(struct SchemeList *args)
+{
+    SchemeAtom *atom = args->car->atom;
+
+    if (atom->type_tag != SCHEME_STRING)
+    {
+        printf("Argument must be a string\n");
+        return 0;
+    }
+
+    return atom->val->str;
+}
+
+
 SchemeListElem *primitive_add(struct SchemeList *args)
 {
     float arg1 = get_number_car(args);
@@ -160,4 +174,20 @@ SchemeListElem *primitive_not(struct SchemeList *args)
     bool arg1 = get_boolean_car(args);
 
     return make_boolean(!arg1);
+}
+
+SchemeListElem *primitive_display(struct SchemeList *args)
+{
+    char *arg1 = get_string_car(args);
+
+    printf("%s", arg1);
+
+    return make_symbol("ok");
+}
+
+SchemeListElem *primitive_newline(struct SchemeList *args)
+{
+    printf("\n");
+
+    return make_symbol("ok");
 }

@@ -93,8 +93,6 @@ SchemeAtom *parse_atom(char *token, char **save_ptr)
 
 void parse_string(char *token, SchemeAtom *atom, char **save_ptr)
 {
-    printf("token %s\n", token);
-    // token = strtok_r(NULL, WHITESPACE, save_ptr);
     atom->val->str = calloc(1, sizeof(char));
     atom->type_tag = SCHEME_STRING;
 
