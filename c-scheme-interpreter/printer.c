@@ -15,7 +15,7 @@ void print_elem(SchemeListElem *elem)
     if (elem->atom != NULL)
     {
         print_atom(elem->atom);
-    } else if (elem->list != NULL)
+    } else
     {
         print_list(elem->list);
     }
@@ -87,6 +87,8 @@ void print_procedure(SchemeProcedure *proc)
 
 void print_list_contents(struct SchemeList *list)
 {
+    if (list == NULL) return;
+
     print_elem(list->car);
 
     if (list->cdr != NULL)
@@ -98,8 +100,6 @@ void print_list_contents(struct SchemeList *list)
 
 void print_list(struct SchemeList *list)
 {
-    if (list == NULL) return;
-
     printf("(");
     print_list_contents(list);
     printf(")");

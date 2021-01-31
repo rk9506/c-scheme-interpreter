@@ -106,8 +106,8 @@ void test_compound_procedures()
                 (define cons (lambda (x y) (lambda (m) (m x y)))) \
                 (define car (lambda (p) (p (lambda (x y) x)))) \
                 (define cdr (lambda (p) (p (lambda (x y) y)))) \
-                (define l (cons 1 (cons 2 (cons 3 0)))) \
-                (car (cdr (cdr l)))",
+                (define l (cons 1 (cons 2 (cons 3 (quote ()))))) \
+                (car (cdr (cdr l))))",
              "3");
 }
 
