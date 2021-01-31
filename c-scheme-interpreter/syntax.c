@@ -70,6 +70,21 @@ struct SchemeList *lambda_body(SchemeListElem *exp)
     return exp->list->cdr->cdr;
 }
 
+SchemeListElem *make_lambda(struct SchemeList *parameters, struct SchemeList *body)
+{
+    SchemeListElem *result = make_elem();
+    result->list = make_list();
+    result->list->car = make_symbol("lambda");
+
+    struct SchemeList *contents = make_list();
+    contents->car->list = parameters;
+    contents->cdr = body;
+
+    result->list->cdr = contents;
+
+    return result;
+}
+
 bool is_definition(SchemeListElem *exp)
 {
     return is_tagged_list(exp, "define");
@@ -81,25 +96,24 @@ SchemeListElem *definition_variable(SchemeListElem *exp)
     if (is_variable(var))
     {
         return var;
+    } else
+    {
+        // exp is using the syntactic sugar (define (f x) ...)
+        return var->list->car;
     }
-
-    printf("Invalid definition variable\n");
-
-    return NULL;
 }
 
 SchemeListElem *definition_value(SchemeListElem *exp)
 {
     SchemeListElem *var = exp->list->cdr->car;
+
     if (is_variable(var))
     {
         return exp->list->cdr->cdr->car;
     }
-
-    // TODO: Return make-lambda when second elem is a pair,
-    // for syntactic sugar (define (f x) ...)
-
-    return NULL;
+    {
+        return make_lambda(var->list->cdr, exp->list->cdr->cdr);
+    }
 }
 
 bool is_assignment(SchemeListElem *exp)

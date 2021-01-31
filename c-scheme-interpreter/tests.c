@@ -76,6 +76,7 @@ void test_definition()
 {
     run_test("should be able to define a variable", "(begin (define x 5) x)", "5");
     run_test("should be able to redefine a variable", "(begin (define x 5) (define x 10) x)", "10");
+    run_test("should be able to define a procedure with (define (f x))", "(begin (define (inc x) (+ x 1)) (inc 15))", "16");
 }
 
 void test_assignment()

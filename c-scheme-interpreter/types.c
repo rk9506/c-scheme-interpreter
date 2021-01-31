@@ -1,7 +1,5 @@
 #include "types.h"
 
-SchemeListElem *make_elem();
-
 struct SchemeList *make_list()
 {
     struct SchemeList *result = malloc(sizeof(struct SchemeList));
