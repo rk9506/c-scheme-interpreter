@@ -144,19 +144,29 @@ struct SchemeList *empty_arglist()
     return NULL;
 }
 
+struct SchemeList *append_list(struct SchemeList *a, struct SchemeList *b)
+{
+    if (is_null_list(a)) return b;
+
+    if (is_null_list(a->cdr))
+    {
+        a->cdr = b;
+        return a;
+    }
+
+    append_list(a->cdr, b);
+
+    return a;
+}
+
 struct SchemeList *adjoin_arg(SchemeListElem *arg, struct SchemeList *arglist)
 {
-    struct SchemeList *result = make_list();
+    struct SchemeList *singleton = make_list();
 
-    result->car = arg;
-    result->cdr = NULL;
+    singleton->car = arg;
+    singleton->cdr = NULL;
 
-    if (arglist == NULL) return result;
-
-    result->cdr = arglist->cdr;
-    arglist->cdr = result;
-
-    return arglist;
+    return append_list(arglist, singleton);
 }
 
 void ev_application()

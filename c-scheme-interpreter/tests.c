@@ -110,6 +110,46 @@ void test_compound_procedures()
                 (define l (cons 1 (cons 2 (cons 3 (quote ()))))) \
                 (car (cdr (cdr l))))",
              "3");
+
+    run_test("should be able to run a recursive factorial procedure",
+             "(begin \
+                (define (factorial n) (if (= n 1) 1 (* n (factorial (- n 1))))) \
+                (factorial 5))",
+             "120");
+
+    run_test("should be able to run an iterative factorial procedure",
+             "(begin \
+                (define (factorial n) \
+                  (define (iter product counter) \
+                    (if (= counter 1) \
+                        product \
+                        (iter (* product counter) (- counter 1)))) \
+                   (iter 1 n)) \
+                 (factorial 5))",
+             "120");
+
+    run_test("should be able to run a recursive Fibonacci procedure",
+             "(begin \
+                (define (fib n) (if (< n 2) n (+ (fib (- n 1)) (fib (- n 2))))) \
+                (fib 10))",
+             "55");
+
+    run_test("should be able to find the reciprocal of the golden ratio",
+             "(begin \
+               (define (cont-frac-iter n d k)     \
+                 (define (iter i result) \
+                   (if (= i 0) \
+                       (/ (n 1) result) \
+                       (iter (- i 1) (+ (d i) (/ (n (+ i 1)) result))))) \
+                 (iter (- k 1) (d k))) \
+              \
+               (define (golden-reciprocal k) \
+                 (cont-frac-iter (lambda (i) 1.0) \
+                            (lambda (i) 1.0) \
+                            k)) \
+              (golden-reciprocal 100))",
+             "0.618034005165100097656");
+
 }
 
 void run_test(char *title, char *input, char *expected)
