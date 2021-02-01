@@ -135,3 +135,10 @@ unsigned int list_length(struct SchemeList *l)
 
     return 1 + list_length(l->cdr);
 }
+
+bool is_symbol(SchemeListElem *elem)
+{
+    if (elem->atom == NULL) return false;
+
+    return elem->atom->type_tag == SCHEME_SYMBOL;
+}

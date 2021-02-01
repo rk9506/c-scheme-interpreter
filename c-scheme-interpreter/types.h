@@ -73,4 +73,6 @@ void free_atom(SchemeAtom *atom);
 
 unsigned int list_length(struct SchemeList *l);
 
+bool is_symbol(SchemeListElem *elem);
+
 #endif // __TYPES_H_

@@ -44,4 +44,14 @@ SchemeListElem *if_predicate(SchemeListElem *exp);
 SchemeListElem *if_consequent(SchemeListElem *exp);
 SchemeListElem *if_alternative(SchemeListElem *exp);
 
+bool is_cond(SchemeListElem *exp);
+struct SchemeList *cond_clauses(SchemeListElem *exp);
+bool is_cond_else_clause(SchemeListElem *clause);
+SchemeListElem *cond_predicate(SchemeListElem *clause);
+struct SchemeList *cond_actions(struct SchemeList *clause);
+SchemeListElem *cond_first_clause(struct SchemeList *clauses);
+struct SchemeList *cond_rest_clauses(struct SchemeList *clauses);
+bool is_cond_empty_clauses(struct SchemeList *clauses);
+
+
 #endif // __SYNTAX_H_

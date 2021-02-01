@@ -13,6 +13,7 @@ void test_definition();
 void test_assignment();
 void test_primitive_procedures();
 void test_compound_procedures();
+void test_cond();
 
 int num_passed;
 int num_failed;
@@ -52,6 +53,7 @@ void run_all_tests()
     test_assignment();
     test_primitive_procedures();
     test_compound_procedures();
+    test_cond();
 
     printf("Total passed:\t%d\n", num_passed);
     printf("Total failed:\t%d\n", num_failed);
@@ -150,6 +152,17 @@ void test_compound_procedures()
               (golden-reciprocal 100))",
              "0.618034005165100097656");
 
+}
+
+void test_cond()
+{
+    run_test("should be able to use cond without an else",
+             "(cond ((= 1 0) 0) ((= 1 2) 2) (#t 1))",
+             "1");
+
+    run_test("should be able to use cond with an else",
+             "(cond ((= 1 0) 0) ((= 1 2) 2) (else 1))",
+             "1");
 }
 
 void run_test(char *title, char *input, char *expected)

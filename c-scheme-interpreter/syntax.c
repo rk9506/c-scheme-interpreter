@@ -217,3 +217,45 @@ SchemeListElem *if_alternative(SchemeListElem *exp)
         return make_symbol("false");
     }
 }
+
+bool is_cond(SchemeListElem *exp)
+{
+    return is_tagged_list(exp, "cond");
+}
+
+struct SchemeList *cond_clauses(SchemeListElem *exp)
+{
+    return exp->list->cdr;
+}
+
+bool is_cond_else_clause(SchemeListElem *clause)
+{
+    SchemeListElem *pred = clause->list->car;
+
+    return is_symbol(pred) && strcmp(pred->atom->val->sym, "else") == 0;
+}
+
+SchemeListElem *cond_predicate(SchemeListElem *clause)
+{
+    return clause->list->car;
+}
+
+struct SchemeList *cond_actions(struct SchemeList *clause)
+{
+    return clause->cdr;
+}
+
+SchemeListElem *cond_first_clause(struct SchemeList *clauses)
+{
+    return clauses->car;
+}
+
+struct SchemeList *cond_rest_clauses(struct SchemeList *clauses)
+{
+    return clauses->cdr;
+}
+
+bool is_cond_empty_clauses(struct SchemeList *clauses)
+{
+    return is_null_list(clauses);
+}

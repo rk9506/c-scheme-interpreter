@@ -26,6 +26,10 @@ void ev_begin();
 void ev_sequence();
 void ev_if();
 
+void ev_cond();
+void cond_loop();
+void cond_eval_body();
+
 void ev_application();
 void ev_appl_operand_loop();
 void apply_dispatch();
@@ -112,6 +116,9 @@ void eval_dispatch()
     } else if (is_begin(regs->exp))
     {
         ev_begin();
+    } else if (is_cond(regs->exp))
+    {
+        ev_cond();
     } else if (is_application(regs->exp))
     {
         ev_application();
@@ -344,4 +351,64 @@ void ev_if()
     }
 
     eval_dispatch();
+}
+
+void ev_cond()
+{
+    regs->unev = cond_clauses(regs->exp);
+    cond_loop();
+}
+
+void cond_loop()
+{
+    if (is_cond_empty_clauses(regs->unev))
+    {
+        return;
+    }
+
+    regs->exp = cond_first_clause(regs->unev);
+
+    if (is_cond_else_clause(regs->exp))
+    {
+        cond_eval_body();
+        return;
+    }
+
+    regs->exp = cond_predicate(regs->exp);
+    save(regs->unev);
+    save(regs->exp);
+    save(regs->env);
+
+    eval_dispatch();
+
+    // cond-decide
+    regs->env = restore();
+    regs->exp = restore();
+    regs->unev = restore();
+
+    if (is_true(regs->val))
+    {
+        cond_eval_body();
+        return;
+    }
+
+    regs->unev = cond_rest_clauses(regs->unev);
+    cond_loop();
+}
+
+void cond_eval_body()
+{
+    save(regs->unev);
+    save(regs->exp);
+    save(regs->env);
+
+    regs->unev = cond_first_clause(regs->unev)->list;
+    regs->unev = cond_actions(regs->unev);
+
+    ev_sequence();
+
+    // cond-after-body
+    regs->env = restore();
+    regs->exp = restore();
+    regs->unev = restore();
 }
