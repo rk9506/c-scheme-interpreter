@@ -30,4 +30,9 @@ SchemeAtom *primitive_display(SchemeAtom *args);
 SchemeAtom *primitive_newline(SchemeAtom *args);
 SchemeAtom *primitive_read(SchemeAtom *args);
 
+SchemeAtom *primitive_cons(SchemeAtom *args);
+SchemeAtom *primitive_car(SchemeAtom *args);
+SchemeAtom *primitive_cdr(SchemeAtom *args);
+SchemeAtom *primitive_list(SchemeAtom *args);
+
 #endif // __PRIMITIVE_PROCEDURES_H_

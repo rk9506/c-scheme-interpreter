@@ -14,6 +14,7 @@ void test_assignment();
 void test_primitive_procedures();
 void test_compound_procedures();
 void test_cond();
+void test_lists();
 
 int num_passed;
 int num_failed;
@@ -54,6 +55,7 @@ void run_all_tests()
     test_primitive_procedures();
     test_compound_procedures();
     test_cond();
+    test_lists();
 
     printf("Total passed:\t%d\n", num_passed);
     printf("Total failed:\t%d\n", num_failed);
@@ -163,6 +165,29 @@ void test_cond()
     run_test("should be able to use cond with an else",
              "(cond ((= 1 0) 0) ((= 1 2) 2) (else 1))",
              "1");
+}
+
+void test_lists()
+{
+    run_test("should print pairs correctly",
+             "(cons 1 2)",
+             "(1 . 2)");
+
+    run_test("should print null-terminated pairs as lists",
+             "(cons 1 (cons 2 (quote ())))",
+             "(1 2)");
+
+    run_test("should be able to use cons, car and cdr",
+             "(car (cdr (cons 1 (cons 2 (cons 3 (quote ()))))))",
+             "2");
+
+    run_test("should be able to construct lists with the list primitive procedure",
+             "(list 1 2 3)",
+             "(1 2 3)");
+
+    run_test("should be able to construct nested lists with the list primitive procedure",
+             "(list 1 2 (quote (3 4 5)))",
+             "(1 2 (3 4 5))");
 }
 
 void run_test(char *title, char *input, char *expected)

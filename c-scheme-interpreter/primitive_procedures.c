@@ -201,3 +201,32 @@ SchemeAtom *primitive_read(SchemeAtom *args)
 
     return generate_ast(exp);
 }
+
+SchemeAtom *primitive_cons(SchemeAtom *args)
+{
+    return cons(car(args), car(cdr(args)));
+}
+
+SchemeAtom *primitive_car(SchemeAtom *args)
+{
+    SchemeAtom *pair = car(args);
+
+    return car(pair);
+}
+
+SchemeAtom *primitive_cdr(SchemeAtom *args)
+{
+    SchemeAtom *pair = car(args);
+
+    return cdr(pair);
+}
+
+SchemeAtom *primitive_list(SchemeAtom *args)
+{
+    if (is_null_list(args))
+    {
+        return the_empty_list();
+    }
+
+    return cons(car(args), primitive_list(cdr(args)));
+}

@@ -149,6 +149,12 @@ void add_primitive_procedures()
     define_primitive("display", &primitive_display);
     define_primitive("newline", &primitive_newline);
     define_primitive("read", &primitive_read);
+
+    // Lists
+    define_primitive("cons", &primitive_cons);
+    define_primitive("car", &primitive_car);
+    define_primitive("cdr", &primitive_cdr);
+    define_primitive("list", &primitive_list);
 }
 
 void print_env(Environment *env)
