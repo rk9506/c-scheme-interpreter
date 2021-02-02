@@ -2,13 +2,13 @@
 
 typedef struct
 {
-    SchemeListElem *exp;
-    struct Environment *env;
-    SchemeListElem *val;
-    SchemeListElem *proc;
-    struct SchemeList *argl;
+    SchemeAtom *exp;
+    Environment *env;
+    SchemeAtom *val;
+    SchemeAtom *proc;
+    SchemeAtom *argl;
     // void (*continue)();
-    struct SchemeList *unev;
+    SchemeAtom *unev;
 } Registers;
 
 static Registers *regs;
@@ -70,6 +70,7 @@ void initialise_stack()
 
 void initialise_eval()
 {
+    initialise_heap();
     setup_global_environment();
     initialise_regs();
     initialise_env();
@@ -78,12 +79,12 @@ void initialise_eval()
 
 void free_regs()
 {
-    if (regs->exp != NULL) free_elem(regs->exp);
-    if (regs->val != NULL) free_elem(regs->val);
-    if (regs->unev != NULL) free_list(regs->unev);
+    if (regs->exp != NULL) free_atom(regs->exp);
+    if (regs->val != NULL) free_atom(regs->val);
+    if (regs->unev != NULL) free_atom(regs->unev);
 }
 
-SchemeListElem *eval_exp(SchemeListElem *exp)
+SchemeAtom *eval_exp(SchemeAtom *exp)
 {
     regs->exp = exp;
     eval_dispatch();
@@ -132,7 +133,7 @@ void ev_self_eval()
 
 void ev_variable()
 {
-    regs->val = lookup_variable_value(regs->exp->atom->val->sym, regs->env);
+    regs->val = lookup_variable_value(regs->exp->val->sym, regs->env);
 }
 
 void ev_quoted()
@@ -146,32 +147,21 @@ void ev_lambda()
     regs->val = make_procedure(regs->unev, lambda_body(regs->exp), regs->env);
 }
 
-struct SchemeList *empty_arglist()
+SchemeAtom *empty_arglist()
 {
     return NULL;
 }
 
-struct SchemeList *append_list(struct SchemeList *a, struct SchemeList *b)
+SchemeAtom *append_list(SchemeAtom *a, SchemeAtom *b)
 {
     if (is_null_list(a)) return b;
 
-    if (is_null_list(a->cdr))
-    {
-        a->cdr = b;
-        return a;
-    }
-
-    append_list(a->cdr, b);
-
-    return a;
+    return cons(car(a), append_list(cdr(a), b));
 }
 
-struct SchemeList *adjoin_arg(SchemeListElem *arg, struct SchemeList *arglist)
+SchemeAtom *adjoin_arg(SchemeAtom *arg, SchemeAtom *arglist)
 {
-    struct SchemeList *singleton = make_list();
-
-    singleton->car = arg;
-    singleton->cdr = NULL;
+    SchemeAtom *singleton = cons(arg, the_empty_list());
 
     return append_list(arglist, singleton);
 }
@@ -237,7 +227,7 @@ void ev_appl_operand_loop()
 
 void apply_dispatch()
 {
-    TypeTag type_tag = regs->proc->atom->type_tag;
+    TypeTag type_tag = regs->proc->type_tag;
 
     if (type_tag == PRIMITIVE_PROCEDURE)
     {
@@ -259,33 +249,33 @@ void primitive_apply()
 
 void compound_apply()
 {
-    regs->unev = regs->proc->atom->val->proc->parameters;
-    regs->env = extend_environment(regs->unev, regs->argl, regs->proc->atom->val->proc->env);
-    regs->unev = regs->proc->atom->val->proc->body;
+    regs->unev = regs->proc->val->proc->parameters;
+    regs->env = extend_environment(regs->unev, regs->argl, regs->proc->val->proc->env);
+    regs->unev = regs->proc->val->proc->body;
     ev_sequence();
 }
 
 void ev_definition()
 {
-    SchemeListElem *var = definition_variable(regs->exp);
+    SchemeAtom *var = definition_variable(regs->exp);
 
     regs->exp = definition_value(regs->exp);
-    struct Environment *env = regs->env;
+    Environment *env = regs->env;
     eval_dispatch();
     regs->env = env;
-    define_variable(var->atom->val->sym, regs->val, regs->env);
+    define_variable(var->val->sym, regs->val, regs->env);
     regs->val = make_symbol("ok");
 }
 
 void ev_assignment()
 {
-    SchemeListElem *var = assignment_variable(regs->exp);
+    SchemeAtom *var = assignment_variable(regs->exp);
 
     regs->exp = assignment_value(regs->exp);
-    struct Environment *env = regs->env;
+    Environment *env = regs->env;
     eval_dispatch();
     regs->env = env;
-    set_variable_value(var->atom->val->sym, regs->val, regs->env);
+    set_variable_value(var->val->sym, regs->val, regs->env);
     regs->val = make_symbol("ok");
 }
 
@@ -306,8 +296,8 @@ void ev_sequence()
         return;
     }
 
-    struct SchemeList *unev = regs->unev;
-    struct Environment *env = regs->env;
+    SchemeAtom *unev = regs->unev;
+    Environment *env = regs->env;
 
     eval_dispatch();
 
@@ -317,11 +307,11 @@ void ev_sequence()
     ev_sequence();
 }
 
-bool is_true(SchemeListElem *val)
+bool is_true(SchemeAtom *val)
 {
-    if (val->atom->type_tag == SCHEME_BOOLEAN)
+    if (is_boolean(val))
     {
-        return val->atom->val->boolean;
+        return val->val->boolean;
     } else
     {
         return true;
@@ -402,7 +392,7 @@ void cond_eval_body()
     save(regs->exp);
     save(regs->env);
 
-    regs->unev = cond_first_clause(regs->unev)->list;
+    regs->unev = cond_first_clause(regs->unev);
     regs->unev = cond_actions(regs->unev);
 
     ev_sequence();

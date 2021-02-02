@@ -1,9 +1,7 @@
 #include "syntax.h"
 
-bool is_self_evaluating(SchemeListElem *elem)
+bool is_self_evaluating(SchemeAtom *atom)
 {
-    SchemeAtom *atom = elem->atom;
-
     if (atom != NULL)
     {
         TypeTag type_tag = atom->type_tag;
@@ -16,10 +14,8 @@ bool is_self_evaluating(SchemeListElem *elem)
     return false;
 }
 
-bool is_variable(SchemeListElem *elem)
+bool is_variable(SchemeAtom *atom)
 {
-    SchemeAtom *atom = elem->atom;
-
     if (atom != NULL)
     {
         return atom->type_tag == SCHEME_SYMBOL;
@@ -28,234 +24,221 @@ bool is_variable(SchemeListElem *elem)
     return false;
 }
 
-bool is_tagged_list(SchemeListElem *elem, char *tag)
+bool is_tagged_list(SchemeAtom *atom, char *tag)
 {
-    struct SchemeList *list = elem->list;
+    SchemeAtom *car_atom = car(atom);
 
-    if (list != NULL)
+    if (atom != NULL)
     {
-        SchemeAtom *atom = list->car->atom;
-
-        if (atom != NULL)
-        {
-            return strcmp(atom->val->sym, tag) == 0;
-        }
+        return strcmp(car_atom->val->sym, tag) == 0;
     }
 
     return false;
 }
 
-bool is_quoted(SchemeListElem *exp)
+bool is_quoted(SchemeAtom *exp)
 {
     return is_tagged_list(exp, "quote");
 }
 
-SchemeListElem *text_of_quotation(SchemeListElem *exp)
+SchemeAtom *text_of_quotation(SchemeAtom *exp)
 {
-    return exp->list->cdr->car;
+    return car(cdr(exp));
 }
 
-bool is_lambda(SchemeListElem *exp)
+bool is_lambda(SchemeAtom *exp)
 {
     return is_tagged_list(exp, "lambda");
 }
 
-struct SchemeList *lambda_parameters(SchemeListElem *exp)
+SchemeAtom *lambda_parameters(SchemeAtom *exp)
 {
-    return exp->list->cdr->car->list;
+    return car(cdr(exp));
 }
 
-struct SchemeList *lambda_body(SchemeListElem *exp)
+SchemeAtom *lambda_body(SchemeAtom *exp)
 {
-    return exp->list->cdr->cdr;
+    return cdr(cdr(exp));
 }
 
-SchemeListElem *make_lambda(struct SchemeList *parameters, struct SchemeList *body)
+SchemeAtom *make_lambda(SchemeAtom *parameters, SchemeAtom *body)
 {
-    SchemeListElem *result = make_elem();
-    result->list = make_list();
-    result->list->car = make_symbol("lambda");
-
-    struct SchemeList *contents = make_list();
-    contents->car->list = parameters;
-    contents->cdr = body;
-
-    result->list->cdr = contents;
-
-    return result;
+    return cons(make_symbol("lambda"), cons(parameters, body));
 }
 
-bool is_definition(SchemeListElem *exp)
+bool is_definition(SchemeAtom *exp)
 {
     return is_tagged_list(exp, "define");
 }
 
-SchemeListElem *definition_variable(SchemeListElem *exp)
+SchemeAtom *definition_variable(SchemeAtom *exp)
 {
-    SchemeListElem *var = exp->list->cdr->car;
+    SchemeAtom *var = car(cdr(exp));
+
     if (is_variable(var))
     {
         return var;
     } else
     {
         // exp is using the syntactic sugar (define (f x) ...)
-        return var->list->car;
+        return car(var);
     }
 }
 
-SchemeListElem *definition_value(SchemeListElem *exp)
+SchemeAtom *definition_value(SchemeAtom *exp)
 {
-    SchemeListElem *var = exp->list->cdr->car;
+    SchemeAtom *var = car(cdr(exp));
 
     if (is_variable(var))
     {
-        return exp->list->cdr->cdr->car;
+        return car(cdr(cdr(exp)));
     }
     {
-        return make_lambda(var->list->cdr, exp->list->cdr->cdr);
+        return make_lambda(cdr(var), cdr(cdr(exp)));
     }
 }
 
-bool is_assignment(SchemeListElem *exp)
+bool is_assignment(SchemeAtom *exp)
 {
     return is_tagged_list(exp, "set!");
 }
 
-SchemeListElem *assignment_variable(SchemeListElem *exp)
+SchemeAtom *assignment_variable(SchemeAtom *exp)
 {
-    return exp->list->cdr->car;
+    return car(cdr(exp));
 }
 
-SchemeListElem *assignment_value(SchemeListElem *exp)
+SchemeAtom *assignment_value(SchemeAtom *exp)
 {
-    return exp->list->cdr->cdr->car;
+    return car(cdr(cdr(exp)));
 }
 
-bool is_begin(SchemeListElem *exp)
+bool is_begin(SchemeAtom *exp)
 {
     return is_tagged_list(exp, "begin");
 }
 
-struct SchemeList *begin_actions(SchemeListElem *exp)
+SchemeAtom *begin_actions(SchemeAtom *exp)
 {
-    return exp->list->cdr;
+    return cdr(exp);
 }
 
-SchemeListElem *first_exp(struct SchemeList *exps)
+SchemeAtom *first_exp(SchemeAtom *exps)
 {
-    return exps->car;
+    return car(exps);
 }
 
-struct SchemeList *rest_exps(struct SchemeList *exps)
+SchemeAtom *rest_exps(SchemeAtom *exps)
 {
-    return exps->cdr;
+    return cdr(exps);
 }
 
-bool is_last_exp(struct SchemeList *exps)
+bool is_last_exp(SchemeAtom *exps)
 {
-    return exps->cdr == NULL;
+    return is_null_list(cdr(exps));
 }
 
-bool is_application(SchemeListElem *exp)
+bool is_application(SchemeAtom *exp)
 {
-    return exp->list != NULL;
+    return is_pair(exp);
 }
 
-SchemeListElem *operator(SchemeListElem *exp)
+SchemeAtom *operator(SchemeAtom *exp)
 {
-    return exp->list->car;
+    return car(exp);
 }
 
-struct SchemeList *operands(SchemeListElem *exp)
+SchemeAtom *operands(SchemeAtom *exp)
 {
-    return exp->list->cdr;
+    return cdr(exp);
 }
 
-bool has_no_operands(struct SchemeList *operands)
+bool has_no_operands(SchemeAtom *operands)
 {
-    return operands == NULL;
+    return is_null_list(operands);
 }
 
-bool is_last_operand(struct SchemeList *operands)
+bool is_last_operand(SchemeAtom *operands)
 {
-    return operands->cdr == NULL;
+    return is_null_list(cdr(operands));
 }
 
-SchemeListElem *first_operand(struct SchemeList *operands)
+SchemeAtom *first_operand(SchemeAtom *operands)
 {
-    return operands->car;
+    return car(operands);
 }
 
-struct SchemeList *rest_operands(struct SchemeList *operands)
+SchemeAtom *rest_operands(SchemeAtom *operands)
 {
-    return operands->cdr;
+    return cdr(operands);
 }
 
-bool is_if(SchemeListElem *exp)
+bool is_if(SchemeAtom *exp)
 {
     return is_tagged_list(exp, "if");
 }
 
-SchemeListElem *if_predicate(SchemeListElem *exp)
+SchemeAtom *if_predicate(SchemeAtom *exp)
 {
-    return exp->list->cdr->car;
+    return car(cdr(exp));
 }
 
-SchemeListElem *if_consequent(SchemeListElem *exp)
+SchemeAtom *if_consequent(SchemeAtom *exp)
 {
-    return exp->list->cdr->cdr->car;
+    return car(cdr(cdr(exp)));
 }
 
-SchemeListElem *if_alternative(SchemeListElem *exp)
+SchemeAtom *if_alternative(SchemeAtom *exp)
 {
-    struct SchemeList *cdddr = exp->list->cdr->cdr->cdr;
+    SchemeAtom *cdddr = cdr(cdr(cdr(exp)));
+
     if (!is_null_list(cdddr))
     {
-        return cdddr->car;
+        return car(cdddr);
     } else
     {
         return make_symbol("false");
     }
 }
 
-bool is_cond(SchemeListElem *exp)
+bool is_cond(SchemeAtom *exp)
 {
     return is_tagged_list(exp, "cond");
 }
 
-struct SchemeList *cond_clauses(SchemeListElem *exp)
+SchemeAtom *cond_clauses(SchemeAtom *exp)
 {
-    return exp->list->cdr;
+    return cdr(exp);
 }
 
-bool is_cond_else_clause(SchemeListElem *clause)
+bool is_cond_else_clause(SchemeAtom *clause)
 {
-    SchemeListElem *pred = clause->list->car;
+    SchemeAtom *pred = car(clause);
 
-    return is_symbol(pred) && strcmp(pred->atom->val->sym, "else") == 0;
+    return is_symbol(pred) && strcmp(pred->val->sym, "else") == 0;
 }
 
-SchemeListElem *cond_predicate(SchemeListElem *clause)
+SchemeAtom *cond_predicate(SchemeAtom *clause)
 {
-    return clause->list->car;
+    return car(clause);
 }
 
-struct SchemeList *cond_actions(struct SchemeList *clause)
+SchemeAtom *cond_actions(SchemeAtom *clause)
 {
-    return clause->cdr;
+    return cdr(clause);
 }
 
-SchemeListElem *cond_first_clause(struct SchemeList *clauses)
+SchemeAtom *cond_first_clause(SchemeAtom *clauses)
 {
-    return clauses->car;
+    return car(clauses);
 }
 
-struct SchemeList *cond_rest_clauses(struct SchemeList *clauses)
+SchemeAtom *cond_rest_clauses(SchemeAtom *clauses)
 {
-    return clauses->cdr;
+    return cdr(clauses);
 }
 
-bool is_cond_empty_clauses(struct SchemeList *clauses)
+bool is_cond_empty_clauses(SchemeAtom *clauses)
 {
     return is_null_list(clauses);
 }

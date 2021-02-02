@@ -171,9 +171,9 @@ void run_test(char *title, char *input, char *expected)
     printf("\tInput: \t\t%s\n", input);
     printf("\tExpected: \t%s\n", expected);
 
-    SchemeListElem *ast = generate_ast(input);
     initialise_eval();
-    SchemeListElem *result = eval_exp(ast);
+    SchemeAtom *ast = generate_ast(input);
+    SchemeAtom *result = eval_exp(ast);
 
     char *output_buffer = calloc(BUFFER_SIZE, sizeof(char));
 
@@ -186,7 +186,6 @@ void run_test(char *title, char *input, char *expected)
     printf("\tActual: \t%s\n", output_buffer);
 
     free(output_buffer);
-    free_elem(result);
 
     if (passed)
     {

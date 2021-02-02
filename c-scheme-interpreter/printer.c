@@ -6,19 +6,18 @@ void print_number(SchemeNumber num);
 void print_boolean(SchemeBoolean boolean);
 void print_symbol(SchemeSymbol sym);
 void print_procedure(SchemeProcedure *proc);
-void print_list(struct SchemeList *list);
+void print_list(SchemeAtom *list);
 
-void print_elem(SchemeListElem *elem)
+void print_elem(SchemeAtom *elem)
 {
-    if (elem == NULL) return;
-
-    if (elem->atom != NULL)
+    if (is_null_list(elem))
     {
-        print_atom(elem->atom);
-    } else
-    {
-        print_list(elem->list);
+        // Print the empty list
+        print_list(elem);
+        return;
     }
+
+    print_atom(elem);
 }
 
 void print_atom(SchemeAtom *atom)
@@ -39,6 +38,10 @@ void print_atom(SchemeAtom *atom)
 
         case SCHEME_SYMBOL:
             print_symbol(atom->val->sym);
+            break;
+
+        case SCHEME_PAIR_POINTER:
+            print_list(atom);
             break;
 
         case SCHEME_PROCEDURE:
@@ -85,20 +88,29 @@ void print_procedure(SchemeProcedure *proc)
     printf(">");
 }
 
-void print_list_contents(struct SchemeList *list)
+void print_list_contents(SchemeAtom *list)
 {
     if (list == NULL) return;
 
-    print_elem(list->car);
+    print_elem(car(list));
 
-    if (list->cdr != NULL)
+    SchemeAtom *list_cdr = cdr(list);
+
+    if (!is_null_list(list_cdr))
     {
-        printf(" ");
-        print_list_contents(list->cdr);
+        if (is_pair(list_cdr))
+        {
+            printf(" ");
+            print_list_contents(list_cdr);
+        } else
+        {
+            printf(" . ");
+            print_elem(list_cdr);
+        }
     }
 }
 
-void print_list(struct SchemeList *list)
+void print_list(SchemeAtom *list)
 {
     printf("(");
     print_list_contents(list);

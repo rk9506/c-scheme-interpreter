@@ -8,12 +8,14 @@
 #include <string.h>
 #include <stdio.h>
 
-struct SchemeList *insert(char *key, SchemeListElem *value, struct SchemeList *table);
-struct SchemeList *lookup(char *key, struct SchemeList *table);
-void print_table(struct SchemeList *table);
+SchemeAtom *entry_value(SchemeAtom *entry);
+
+SchemeAtom *insert(char *key, SchemeAtom *value, SchemeAtom *table);
+SchemeAtom *lookup(char *key, SchemeAtom *table);
+void print_table(SchemeAtom *table);
 
 
-struct SchemeList *make_table();
-void free_table(struct SchemeList *list);
+SchemeAtom *make_table();
+void free_table(SchemeAtom *list);
 
 #endif // __TABLE_H_

@@ -4,12 +4,6 @@
 #include <stdbool.h>
 #include <stdlib.h>
 
-struct SchemeList;
-
-// Dumb hack to get around C's dumb rules regarding
-// mutually recursive type declarations
-struct scheme_list_elem_t;
-
 typedef char* SchemeString;
 typedef float SchemeNumber;
 typedef bool SchemeBoolean;
@@ -19,18 +13,18 @@ typedef char* SchemeSymbol;
 // a pointer within our "Scheme virtual machine", as opposed to a C pointer
 typedef unsigned int SchemePairPointer;
 
-typedef enum { SCHEME_STRING, SCHEME_NUMBER, SCHEME_BOOLEAN, SCHEME_SYMBOL, SCHEME_PROCEDURE, PRIMITIVE_PROCEDURE /* SCHEME_PAIR_POINTER */ } TypeTag;
+typedef enum { SCHEME_STRING, SCHEME_NUMBER, SCHEME_BOOLEAN, SCHEME_SYMBOL, SCHEME_PROCEDURE, PRIMITIVE_PROCEDURE, SCHEME_PAIR_POINTER } TypeTag;
 
 typedef struct
 {
-    struct SchemeList *parameters;
-    struct SchemeList *body;
-    struct Environment *env;
+    struct SchemeAtom *parameters;
+    struct SchemeAtom *body;
+    struct SchemeAtom *env;
 } SchemeProcedure;
 
 // A primitive procedure is a function which takes a pointer
-// to a SchemeList of arguments, and returns a result as a SchemeListElem
-typedef struct scheme_list_elem_t *(*PrimitiveProcedure)(struct SchemeList*);
+// to a list of arguments, and returns a result as a SchemeAtom
+typedef struct SchemeAtom *(*PrimitiveProcedure)(struct SchemeAtom*);
 
 typedef union
 {
@@ -43,36 +37,31 @@ typedef union
     PrimitiveProcedure primitive_proc;
 } SchemePrimitive;
 
-typedef struct
+typedef struct SchemeAtom
 {
     TypeTag type_tag;
     SchemePrimitive *val;
 } SchemeAtom;
 
-typedef struct scheme_list_elem_t { SchemeAtom *atom; struct SchemeList *list; } SchemeListElem;
-struct SchemeList { SchemeListElem *car; struct SchemeList *cdr; };
+SchemeAtom *the_empty_list();
+bool is_null_list(SchemeAtom *list);
 
-struct SchemeList *the_empty_list();
-bool is_null_list(struct SchemeList *list);
-
-SchemeListElem *make_elem();
-struct SchemeList *make_list();
 SchemeAtom *make_atom();
 SchemePrimitive *make_primitive();
-SchemeListElem *make_number(float num);
-SchemeListElem *make_boolean(bool boolean);
-SchemeListElem *make_symbol(char *sym);
-SchemeListElem *make_procedure(struct SchemeList *parameters,
-                               struct SchemeList *body,
-                               struct Environment *env);
-SchemeListElem *make_primitive_procedure(PrimitiveProcedure proc);
+SchemeAtom *make_number(float num);
+SchemeAtom *make_boolean(bool boolean);
+SchemeAtom *make_symbol(char *sym);
+SchemeAtom *make_procedure(SchemeAtom *parameters,
+                               SchemeAtom *body,
+                               SchemeAtom *env);
+SchemeAtom *make_primitive_procedure(PrimitiveProcedure proc);
 
-void free_list(struct SchemeList *list);
-void free_elem(SchemeListElem *elem);
 void free_atom(SchemeAtom *atom);
 
-unsigned int list_length(struct SchemeList *l);
-
-bool is_symbol(SchemeListElem *elem);
+bool is_symbol(SchemeAtom *atom);
+bool is_number(SchemeAtom *atom);
+bool is_string(SchemeAtom *atom);
+bool is_pair(SchemeAtom *atom);
+bool is_boolean(SchemeAtom *atom);
 
 #endif // __TYPES_H_

@@ -1,13 +1,33 @@
 #include "env.h"
 
-struct Environment *the_global_environment;
+Environment *the_global_environment;
 
-struct Environment *get_global_environment()
+Environment *get_global_environment()
 {
     return the_global_environment;
 }
 
-SchemeListElem *lookup_variable_value(char *name, struct Environment *env)
+SchemeAtom *env_bindings(Environment *env)
+{
+    return car(env);
+}
+
+SchemeAtom *enclosing_env(Environment *env)
+{
+    return cdr(env);
+}
+
+void set_bindings(Environment *env, SchemeAtom *bindings)
+{
+    set_car(env, bindings);
+}
+
+void set_enclosing_env(Environment *env, Environment *parent)
+{
+    set_cdr(env, parent);
+}
+
+SchemeAtom *lookup_variable_value(char *name, Environment *env)
 {
     if (env == NULL)
     {
@@ -15,80 +35,75 @@ SchemeListElem *lookup_variable_value(char *name, struct Environment *env)
         return NULL;
     }
 
-    struct SchemeList *e = lookup(name, env->bindings);
+    SchemeAtom *e = lookup(name, env_bindings(env));
+
     if (e == NULL)
     {
-        return lookup_variable_value(name, env->enclosing_env);
+        return lookup_variable_value(name, enclosing_env(env));
     }
 
-    return e->cdr->car;
+    return entry_value(e);
 }
 
-void set_variable_value(char *var, SchemeListElem *val, struct Environment *env)
+void set_variable_value(char *var, SchemeAtom *val, Environment *env)
 {
-    if (env == NULL)
+    if (is_null_list(env))
     {
         printf("Unbound variable -- SET! %s", var);
         return;
     }
 
-    struct SchemeList *e = lookup(var, env->bindings);
+    SchemeAtom *e = lookup(var, env_bindings(env));
 
     if (e == NULL)
     {
-        set_variable_value(var, val, env->enclosing_env);
+        set_variable_value(var, val, enclosing_env(env));
     }
 
-    free_elem(e->cdr->car);
-    e->cdr->car = val;
+    set_car(cdr(e), val);
 }
 
-void define_variable(char *var, SchemeListElem *val, struct Environment *env)
+void define_variable(char *var, SchemeAtom *val, Environment *env)
 {
-    if (lookup(var, env->bindings))
+    if (lookup(var, env_bindings(env)))
     {
         set_variable_value(var, val, env);
     } else
     {
-        env->bindings = insert(var, val, env->bindings);
+        set_bindings(env, insert(var, val, env_bindings(env)));
     }
 }
 
-struct Environment *make_environment()
+Environment *make_environment()
 {
-    struct Environment *env = malloc(sizeof(struct Environment));
-    env->bindings = make_table();
-    env->enclosing_env = NULL;
-
-    return env;
+    return cons(the_empty_list(), the_empty_list());
 }
 
-void free_environment(struct Environment *env)
+void insert_bindings(SchemeAtom *vars, SchemeAtom *vals, Environment *env)
 {
-    if (env == NULL) return;
+    if (is_null_list(vars)) return;
 
-    free_table(env->bindings);
-    free(env);
+    define_variable(car(vars)->val->sym, car(vals), env);
+
+    insert_bindings(cdr(vars), cdr(vals), env);
 }
 
-void insert_bindings(struct SchemeList *vars, struct SchemeList *vals, struct Environment *env)
+unsigned int list_length(SchemeAtom *l)
 {
-    if (vars == NULL) return;
+    if (is_null_list(l)) return 0;
 
-    define_variable(vars->car->atom->val->sym, vals->car, env);
-
-    insert_bindings(vars->cdr, vals->cdr, env);
+    return 1 + list_length(cdr(l));
 }
 
-struct Environment *extend_environment(struct SchemeList *vars, struct SchemeList *vals, struct Environment *env)
+Environment *extend_environment(SchemeAtom *vars, SchemeAtom *vals, Environment *env)
 {
     unsigned int vars_length = list_length(vars);
     unsigned int vals_length = list_length(vals);
 
     if (vars_length == vals_length)
     {
-        struct Environment *new_env = make_environment();
-        new_env->enclosing_env = env;
+        Environment *new_env = make_environment();
+        set_enclosing_env(new_env, env);
 
         insert_bindings(vars, vals, new_env);
 
@@ -136,18 +151,13 @@ void add_primitive_procedures()
     define_primitive("read", &primitive_read);
 }
 
-struct Environment *get_empty_environment()
-{
-    return NULL;
-}
-
-void print_env(struct Environment *env)
+void print_env(Environment *env)
 {
     if (env == NULL) return;
 
-    print_table(env->bindings);
+    print_table(env_bindings(env));
 
-    print_env(env->enclosing_env);
+    print_env(enclosing_env(env));
 }
 
 void setup_global_environment()

@@ -4,6 +4,7 @@
 #include "syntax.h"
 #include "env.h"
 #include "stack.h"
+#include "heap.h"
 
 void initialise_regs();
 void initialise_env();
@@ -11,6 +12,6 @@ void initialise_eval();
 
 void free_regs();
 
-SchemeListElem *eval_exp(SchemeListElem *exp);
+SchemeAtom *eval_exp(SchemeAtom *exp);
 
 #endif // __EVAL_H_

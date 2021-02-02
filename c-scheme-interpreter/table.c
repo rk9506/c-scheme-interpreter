@@ -1,45 +1,46 @@
 #include "table.h"
 
-struct SchemeList *make_table()
+SchemeAtom *make_table()
 {
-    return make_list();
+    return the_empty_list();
 }
 
-void free_table(struct SchemeList *list)
+SchemeAtom *make_entry(char *key, SchemeAtom *value)
 {
-    free_list(list);
+    SchemeAtom *key_atom = make_symbol(key);
+
+    return cons(key_atom, cons(value, the_empty_list()));
 }
 
-struct SchemeList *insert(char *key, SchemeListElem *value, struct SchemeList *table)
+SchemeAtom *entry_value(SchemeAtom *entry)
 {
-    struct SchemeList *result = make_list();
-    result->car = make_symbol(key);
-    result->cdr = make_list();
-    free(result->cdr->car);
-    result->cdr->car = value;
+    return car(cdr(entry));
+}
 
-    struct SchemeList *new_table = make_list();
-    new_table->car->list = result;
-    new_table->cdr = table;
+SchemeAtom *insert(char *key, SchemeAtom *value, SchemeAtom *table)
+{
+    SchemeAtom *entry = make_entry(key, value);
+
+    SchemeAtom *new_table = cons(entry, table);
 
     return new_table;
 }
 
-struct SchemeList *lookup(char *key, struct SchemeList *table)
+SchemeAtom *lookup(char *key, SchemeAtom *table)
 {
     if (table == NULL) return NULL;
 
-    struct SchemeList *first_entry = table->car->list;
-    if (first_entry != NULL && strcmp(first_entry->car->atom->val->sym, key) == 0)
+    SchemeAtom *first_entry = car(table);
+    if (first_entry != NULL && strcmp(car(first_entry)->val->sym, key) == 0)
     {
         return first_entry;
     } else
     {
-        return lookup(key, table->cdr);
+        return lookup(key, cdr(table));
     }
 }
 
-void print_table(struct SchemeList *table)
+void print_table(SchemeAtom *table)
 {
     print_list(table);
 }

@@ -1,47 +1,13 @@
 #include "types.h"
 
-struct SchemeList *the_empty_list()
+SchemeAtom *the_empty_list()
 {
     return NULL;
 }
 
-bool is_null_list(struct SchemeList *list)
+bool is_null_list(SchemeAtom *list)
 {
     return list == NULL;
-}
-
-struct SchemeList *make_list()
-{
-    struct SchemeList *result = malloc(sizeof(struct SchemeList));
-    result->cdr = NULL;
-    result->car = make_elem();
-
-    return result;
-}
-
-void free_list(struct SchemeList *list)
-{
-    if (list == NULL) return;
-
-    free_elem(list->car);
-    free_list(list->cdr);
-}
-
-SchemeListElem *make_elem()
-{
-    SchemeListElem *result = malloc(sizeof(SchemeListElem));
-    result->atom = NULL;
-    result->list = NULL;
-
-    return result;
-}
-
-void free_elem(SchemeListElem *elem)
-{
-    if (elem == NULL) return;
-    free_list(elem->list);
-    free_atom(elem->atom);
-    free(elem);
 }
 
 SchemeAtom *make_atom()
@@ -53,6 +19,7 @@ void free_atom(SchemeAtom *atom)
 {
     if (atom == NULL) return;
     free(atom);
+    free(atom->val);
 }
 
 SchemePrimitive *make_primitive()
@@ -60,46 +27,43 @@ SchemePrimitive *make_primitive()
     return malloc(sizeof(SchemePrimitive));
 }
 
-SchemeListElem *make_number(float num)
+SchemeAtom *make_number(float num)
 {
-    SchemeListElem *elem = make_elem();
-    elem->atom = make_atom();
+    SchemeAtom *atom = make_atom();
 
-    elem->atom->type_tag = SCHEME_NUMBER;
-    elem->atom->val = make_primitive();
-    elem->atom->val->num = num;
+    atom->type_tag = SCHEME_NUMBER;
+    atom->val = make_primitive();
+    atom->val->num = num;
 
-    return elem;
+    return atom;
 }
 
-SchemeListElem *make_boolean(bool boolean)
+SchemeAtom *make_boolean(bool boolean)
 {
-    SchemeListElem *elem = make_elem();
-    elem->atom = make_atom();
+    SchemeAtom *atom = make_atom();
 
-    elem->atom->type_tag = SCHEME_BOOLEAN;
-    elem->atom->val = make_primitive();
-    elem->atom->val->boolean = boolean;
+    atom->type_tag = SCHEME_BOOLEAN;
+    atom->val = make_primitive();
+    atom->val->boolean = boolean;
 
-    return elem;
+    return atom;
 }
 
 
-SchemeListElem *make_symbol(char *sym)
+SchemeAtom *make_symbol(char *sym)
 {
-    SchemeListElem *elem = make_elem();
-    elem->atom = make_atom();
+    SchemeAtom *atom = make_atom();
 
-    elem->atom->type_tag = SCHEME_SYMBOL;
-    elem->atom->val = make_primitive();
-    elem->atom->val->sym = sym;
+    atom->type_tag = SCHEME_SYMBOL;
+    atom->val = make_primitive();
+    atom->val->sym = sym;
 
-    return elem;
+    return atom;
 }
 
-SchemeListElem *make_procedure(struct SchemeList *parameters,
-                               struct SchemeList *body,
-                               struct Environment *env)
+SchemeAtom *make_procedure(SchemeAtom *parameters,
+                               SchemeAtom *body,
+                               SchemeAtom *env)
 {
     SchemeProcedure *proc = malloc(sizeof(SchemeProcedure));
 
@@ -107,38 +71,57 @@ SchemeListElem *make_procedure(struct SchemeList *parameters,
     proc->body = body;
     proc->env = env;
 
-    SchemeListElem *elem = make_elem();
-    elem->atom = make_atom();
+    SchemeAtom *atom = make_atom();
 
-    elem->atom->type_tag = SCHEME_PROCEDURE;
-    elem->atom->val = make_primitive();
-    elem->atom->val->proc = proc;
+    atom->type_tag = SCHEME_PROCEDURE;
+    atom->val = make_primitive();
+    atom->val->proc = proc;
 
-    return elem;
+    return atom;
 }
 
-SchemeListElem *make_primitive_procedure(PrimitiveProcedure proc)
+SchemeAtom *make_primitive_procedure(PrimitiveProcedure proc)
 {
-    SchemeListElem *elem = make_elem();
-    elem->atom = make_atom();
+    SchemeAtom *atom = make_atom();
 
-    elem->atom->type_tag = PRIMITIVE_PROCEDURE;
-    elem->atom->val = make_primitive();
-    elem->atom->val->primitive_proc = proc;
+    atom->type_tag = PRIMITIVE_PROCEDURE;
+    atom->val = make_primitive();
+    atom->val->primitive_proc = proc;
 
-    return elem;
+    return atom;
 }
 
-unsigned int list_length(struct SchemeList *l)
+bool is_symbol(SchemeAtom *atom)
 {
-    if (l == NULL) return 0;
+    if (atom == NULL) return false;
 
-    return 1 + list_length(l->cdr);
+    return atom->type_tag == SCHEME_SYMBOL;
 }
 
-bool is_symbol(SchemeListElem *elem)
+bool is_number(SchemeAtom *atom)
 {
-    if (elem->atom == NULL) return false;
+    if (atom == NULL) return false;
 
-    return elem->atom->type_tag == SCHEME_SYMBOL;
+    return atom->type_tag == SCHEME_NUMBER;
+}
+
+bool is_string(SchemeAtom *atom)
+{
+    if (atom == NULL) return false;
+
+    return atom->type_tag == SCHEME_STRING;
+}
+
+bool is_pair(SchemeAtom *atom)
+{
+    if (atom == NULL) return false;
+
+    return atom->type_tag == SCHEME_PAIR_POINTER;
+}
+
+bool is_boolean(SchemeAtom *atom)
+{
+    if (atom == NULL) return false;
+
+    return atom->type_tag == SCHEME_BOOLEAN;
 }

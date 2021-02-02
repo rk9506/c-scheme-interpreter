@@ -6,29 +6,28 @@
 #include "primitive_procedures.h"
 #include "printer.h"
 #include "debug.h"
+#include "heap.h"
 
 #include <stdio.h>
 
-struct Environment
-{
-    struct Environment *enclosing_env;
-    struct SchemeList *bindings;
-};
+typedef SchemeAtom Environment;
 
-struct Environment *get_global_environment();
+SchemeAtom *env_bindings(Environment *env);
+
+Environment *get_global_environment();
 void setup_global_environment();
 
-SchemeListElem *lookup_variable_value(char *name, struct Environment *env);
-void set_variable_value(char *var, SchemeListElem *val, struct Environment *env);
-void define_variable(char *var, SchemeListElem *val, struct Environment *env);
+SchemeAtom *lookup_variable_value(char *name, Environment *env);
+void set_variable_value(char *var, SchemeAtom *val, Environment *env);
+void define_variable(char *var, SchemeAtom *val, Environment *env);
 
-struct Environment *make_environment();
-void free_environment(struct Environment *env);
+Environment *make_environment();
+void free_environment(Environment *env);
 
-struct Environment *extend_environment(struct SchemeList *vars, struct SchemeList *vals, struct Environment *env);
-struct Environment *get_empty_environment();
-struct Environment *setup_environment();
+Environment *extend_environment(SchemeAtom *vars, SchemeAtom *vals, Environment *env);
+Environment *get_empty_environment();
+Environment *setup_environment();
 
-void print_env(struct Environment *env);
+void print_env(Environment *env);
 
 #endif // __ENV_H_

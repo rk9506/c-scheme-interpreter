@@ -3,30 +3,31 @@
 
 #include "types.h"
 #include "parser.h"
+#include "heap.h"
 
 #include <stdio.h>
 #include <stdlib.h>
 
-SchemeListElem *apply_primitive_procedure(SchemeListElem *proc_elem, struct SchemeList *args);
+SchemeAtom *apply_primitive_procedure(SchemeAtom *proc_elem, SchemeAtom *args);
 
-SchemeListElem *primitive_add(struct SchemeList *args);
-SchemeListElem *primitive_subtract(struct SchemeList *args);
-SchemeListElem *primitive_multiply(struct SchemeList *args);
-SchemeListElem *primitive_divide(struct SchemeList *args);
-SchemeListElem *primitive_remainder(struct SchemeList *args);
+SchemeAtom *primitive_add(SchemeAtom *args);
+SchemeAtom *primitive_subtract(SchemeAtom *args);
+SchemeAtom *primitive_multiply(SchemeAtom *args);
+SchemeAtom *primitive_divide(SchemeAtom *args);
+SchemeAtom *primitive_remainder(SchemeAtom *args);
 
-SchemeListElem *primitive_number_equality(struct SchemeList *args);
-SchemeListElem *primitive_lt(struct SchemeList *args);
-SchemeListElem *primitive_lte(struct SchemeList *args);
-SchemeListElem *primitive_gt(struct SchemeList *args);
-SchemeListElem *primitive_gte(struct SchemeList *args);
+SchemeAtom *primitive_number_equality(SchemeAtom *args);
+SchemeAtom *primitive_lt(SchemeAtom *args);
+SchemeAtom *primitive_lte(SchemeAtom *args);
+SchemeAtom *primitive_gt(SchemeAtom *args);
+SchemeAtom *primitive_gte(SchemeAtom *args);
 
-SchemeListElem *primitive_and(struct SchemeList *args);
-SchemeListElem *primitive_or(struct SchemeList *args);
-SchemeListElem *primitive_not(struct SchemeList *args);
+SchemeAtom *primitive_and(SchemeAtom *args);
+SchemeAtom *primitive_or(SchemeAtom *args);
+SchemeAtom *primitive_not(SchemeAtom *args);
 
-SchemeListElem *primitive_display(struct SchemeList *args);
-SchemeListElem *primitive_newline(struct SchemeList *args);
-SchemeListElem *primitive_read(struct SchemeList *args);
+SchemeAtom *primitive_display(SchemeAtom *args);
+SchemeAtom *primitive_newline(SchemeAtom *args);
+SchemeAtom *primitive_read(SchemeAtom *args);
 
 #endif // __PRIMITIVE_PROCEDURES_H_

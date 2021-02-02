@@ -3,6 +3,7 @@
 
 #include "types.h"
 #include "printer.h"
+#include "heap.h"
 
 #include <stdbool.h>
 #include <string.h>
@@ -11,8 +12,8 @@
 #include <stdlib.h>
 #include <ctype.h>
 
-SchemeListElem *generate_ast(char *exp);
+SchemeAtom *generate_ast(char *exp);
 
-struct SchemeList *parse_list(char *tokens, char **save_ptr);
+SchemeAtom *parse_list(char *tokens, char **save_ptr);
 
 #endif // __PARSER_H_

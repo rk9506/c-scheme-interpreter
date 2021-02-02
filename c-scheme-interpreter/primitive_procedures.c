@@ -2,18 +2,18 @@
 
 #define INPUT_BUFFER_SIZE 1024 * 1024
 
-SchemeListElem *apply_primitive_procedure(SchemeListElem *proc_elem, struct SchemeList *args)
+SchemeAtom *apply_primitive_procedure(SchemeAtom *proc_elem, SchemeAtom *args)
 {
-    PrimitiveProcedure primitive_proc = proc_elem->atom->val->primitive_proc;
+    PrimitiveProcedure primitive_proc = proc_elem->val->primitive_proc;
 
     return (*primitive_proc)(args);
 }
 
-float get_number_car(struct SchemeList *args)
+float get_number_car(SchemeAtom *args)
 {
-    SchemeAtom *atom = args->car->atom;
+    SchemeAtom *atom = car(args);
 
-    if (atom->type_tag != SCHEME_NUMBER)
+    if (!is_number(atom))
     {
         printf("Argument must be a number\n");
         return 0;
@@ -22,11 +22,11 @@ float get_number_car(struct SchemeList *args)
     return atom->val->num;
 }
 
-float get_number_cadr(struct SchemeList *args)
+float get_number_cadr(SchemeAtom *args)
 {
-    SchemeAtom *atom = args->cdr->car->atom;
+    SchemeAtom *atom = car(cdr(args));
 
-    if (atom->type_tag != SCHEME_NUMBER)
+    if (!is_number(atom))
     {
         printf("Argument must be a number\n");
         return 0;
@@ -35,11 +35,11 @@ float get_number_cadr(struct SchemeList *args)
     return atom->val->num;
 }
 
-bool get_boolean_car(struct SchemeList *args)
+bool get_boolean_car(SchemeAtom *args)
 {
-    SchemeAtom *atom = args->car->atom;
+    SchemeAtom *atom = car(atom);
 
-    if (atom->type_tag != SCHEME_BOOLEAN)
+    if (!is_boolean(atom))
     {
         printf("Argument must be a boolean\n");
         return 0;
@@ -48,11 +48,11 @@ bool get_boolean_car(struct SchemeList *args)
     return atom->val->boolean;
 }
 
-bool get_boolean_cadr(struct SchemeList *args)
+bool get_boolean_cadr(SchemeAtom *args)
 {
-    SchemeAtom *atom = args->cdr->car->atom;
+    SchemeAtom *atom = car(cdr(args));
 
-    if (atom->type_tag != SCHEME_BOOLEAN)
+    if (!is_boolean(atom))
     {
         printf("Argument must be a boolean\n");
         return false;
@@ -61,11 +61,11 @@ bool get_boolean_cadr(struct SchemeList *args)
     return atom->val->boolean;
 }
 
-char *get_string_car(struct SchemeList *args)
+char *get_string_car(SchemeAtom *args)
 {
-    SchemeAtom *atom = args->car->atom;
+    SchemeAtom *atom = car(atom);
 
-    if (atom->type_tag != SCHEME_STRING)
+    if (!is_string(atom))
     {
         printf("Argument must be a string\n");
         return 0;
@@ -75,7 +75,7 @@ char *get_string_car(struct SchemeList *args)
 }
 
 
-SchemeListElem *primitive_add(struct SchemeList *args)
+SchemeAtom *primitive_add(SchemeAtom *args)
 {
     float arg1 = get_number_car(args);
     float arg2 = get_number_cadr(args);
@@ -83,7 +83,7 @@ SchemeListElem *primitive_add(struct SchemeList *args)
     return make_number(arg1 + arg2);
 }
 
-SchemeListElem *primitive_subtract(struct SchemeList *args)
+SchemeAtom *primitive_subtract(SchemeAtom *args)
 {
     float arg1 = get_number_car(args);
     float arg2 = get_number_cadr(args);
@@ -91,7 +91,7 @@ SchemeListElem *primitive_subtract(struct SchemeList *args)
     return make_number(arg1 - arg2);
 }
 
-SchemeListElem *primitive_multiply(struct SchemeList *args)
+SchemeAtom *primitive_multiply(SchemeAtom *args)
 {
     float arg1 = get_number_car(args);
     float arg2 = get_number_cadr(args);
@@ -99,7 +99,7 @@ SchemeListElem *primitive_multiply(struct SchemeList *args)
     return make_number(arg1 * arg2);
 }
 
-SchemeListElem *primitive_divide(struct SchemeList *args)
+SchemeAtom *primitive_divide(SchemeAtom *args)
 {
     float arg1 = get_number_car(args);
     float arg2 = get_number_cadr(args);
@@ -107,7 +107,7 @@ SchemeListElem *primitive_divide(struct SchemeList *args)
     return make_number(arg1 / arg2);
 }
 
-SchemeListElem *primitive_remainder(struct SchemeList *args)
+SchemeAtom *primitive_remainder(SchemeAtom *args)
 {
     int arg1 = (int) get_number_car(args);
     int arg2 = (int) get_number_cadr(args);
@@ -115,7 +115,7 @@ SchemeListElem *primitive_remainder(struct SchemeList *args)
     return make_number(arg1 % arg2);
 }
 
-SchemeListElem *primitive_number_equality(struct SchemeList *args)
+SchemeAtom *primitive_number_equality(SchemeAtom *args)
 {
     float arg1 = get_number_car(args);
     float arg2 = get_number_cadr(args);
@@ -123,7 +123,7 @@ SchemeListElem *primitive_number_equality(struct SchemeList *args)
     return make_boolean(arg1 == arg2);
 }
 
-SchemeListElem *primitive_lt(struct SchemeList *args)
+SchemeAtom *primitive_lt(SchemeAtom *args)
 {
     float arg1 = get_number_car(args);
     float arg2 = get_number_cadr(args);
@@ -131,7 +131,7 @@ SchemeListElem *primitive_lt(struct SchemeList *args)
     return make_boolean(arg1 < arg2);
 }
 
-SchemeListElem *primitive_lte(struct SchemeList *args)
+SchemeAtom *primitive_lte(SchemeAtom *args)
 {
     float arg1 = get_number_car(args);
     float arg2 = get_number_cadr(args);
@@ -139,7 +139,7 @@ SchemeListElem *primitive_lte(struct SchemeList *args)
     return make_boolean(arg1 <= arg2);
 }
 
-SchemeListElem *primitive_gt(struct SchemeList *args)
+SchemeAtom *primitive_gt(SchemeAtom *args)
 {
     float arg1 = get_number_car(args);
     float arg2 = get_number_cadr(args);
@@ -147,7 +147,7 @@ SchemeListElem *primitive_gt(struct SchemeList *args)
     return make_boolean(arg1 > arg2);
 }
 
-SchemeListElem *primitive_gte(struct SchemeList *args)
+SchemeAtom *primitive_gte(SchemeAtom *args)
 {
     float arg1 = get_number_car(args);
     float arg2 = get_number_cadr(args);
@@ -155,7 +155,7 @@ SchemeListElem *primitive_gte(struct SchemeList *args)
     return make_boolean(arg1 >= arg2);
 }
 
-SchemeListElem *primitive_and(struct SchemeList *args)
+SchemeAtom *primitive_and(SchemeAtom *args)
 {
     bool arg1 = get_boolean_car(args);
     bool arg2 = get_boolean_cadr(args);
@@ -163,7 +163,7 @@ SchemeListElem *primitive_and(struct SchemeList *args)
     return make_boolean(arg1 && arg2);
 }
 
-SchemeListElem *primitive_or(struct SchemeList *args)
+SchemeAtom *primitive_or(SchemeAtom *args)
 {
     bool arg1 = get_boolean_car(args);
     bool arg2 = get_boolean_cadr(args);
@@ -171,14 +171,14 @@ SchemeListElem *primitive_or(struct SchemeList *args)
     return make_boolean(arg1 || arg2);
 }
 
-SchemeListElem *primitive_not(struct SchemeList *args)
+SchemeAtom *primitive_not(SchemeAtom *args)
 {
     bool arg1 = get_boolean_car(args);
 
     return make_boolean(!arg1);
 }
 
-SchemeListElem *primitive_display(struct SchemeList *args)
+SchemeAtom *primitive_display(SchemeAtom *args)
 {
     char *arg1 = get_string_car(args);
 
@@ -187,14 +187,14 @@ SchemeListElem *primitive_display(struct SchemeList *args)
     return make_symbol("ok");
 }
 
-SchemeListElem *primitive_newline(struct SchemeList *args)
+SchemeAtom *primitive_newline(SchemeAtom *args)
 {
     printf("\n");
 
     return make_symbol("ok");
 }
 
-SchemeListElem *primitive_read(struct SchemeList *args)
+SchemeAtom *primitive_read(SchemeAtom *args)
 {
     char exp[INPUT_BUFFER_SIZE];
     fgets(exp, INPUT_BUFFER_SIZE, stdin);

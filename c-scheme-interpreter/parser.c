@@ -9,6 +9,7 @@
 bool is_number_atom(char *atom);
 bool is_boolean_atom(char *atom);
 bool is_string_atom(char *atom);
+bool is_list(char *token);
 
 char *pad_parentheses(char *exp);
 
@@ -20,25 +21,15 @@ void raise_parse_error(char *message)
     printf("Parse error: %s\n", message);
 }
 
-SchemeListElem *generate_ast(char *exp)
+SchemeAtom *generate_ast(char *exp)
 {
     char **save_ptr = malloc(sizeof(char*));
-    SchemeListElem *elem = malloc(sizeof(SchemeListElem));
-    elem->atom = NULL;
-    elem->list = NULL;
-
 
     exp = pad_parentheses(exp);
 
     char *pch = strtok_r(exp, WHITESPACE, save_ptr);
 
-    if (*pch == LPAREN)
-    {
-        elem->list = parse_list(pch, save_ptr);
-    } else
-    {
-        elem->atom = parse_atom(pch, save_ptr);
-    }
+    SchemeAtom *elem = parse_atom(pch, save_ptr);
 
     return elem;
 }
@@ -71,6 +62,10 @@ SchemeAtom *parse_atom(char *token, char **save_ptr)
     } else if (is_string_atom(token))
     {
         parse_string(token, atom, save_ptr);
+    } else if (is_list(token))
+    {
+        free_atom(atom);
+        return parse_list(token, save_ptr);
     } else
     {
         // Treat the atom as a symbol
@@ -137,7 +132,12 @@ bool is_string_atom(char *atom)
     return *atom == DOUBLEQUOTE;
 }
 
-struct SchemeList *parse_list(char *tokens, char **save_ptr)
+bool is_list(char *token)
+{
+    return *token == LPAREN;
+}
+
+SchemeAtom *parse_list(char *tokens, char **save_ptr)
 {
     // Move forward
     tokens = strtok_r(NULL, WHITESPACE, save_ptr);
@@ -153,20 +153,13 @@ struct SchemeList *parse_list(char *tokens, char **save_ptr)
         return NULL;
     }
 
-    struct SchemeList *result = make_list();
+    SchemeAtom *result = cons(the_empty_list(), the_empty_list());
 
     // Parse first element
-    if ((*tokens) == LPAREN)
-    {
-        result->car->list = parse_list(tokens, save_ptr);
-    } else
-    {
-        result->car->atom = parse_atom(tokens, save_ptr);
-    }
-
+    set_car(result, parse_atom(tokens, save_ptr));
 
     // Parse the rest of the elements
-    result->cdr = parse_list(tokens, save_ptr);
+    set_cdr(result, parse_list(tokens, save_ptr));
 
     return result;
 }

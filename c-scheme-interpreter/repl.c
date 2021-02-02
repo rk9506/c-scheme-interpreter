@@ -37,10 +37,8 @@ int repl()
     fgets(exp, INPUT_BUFFER_SIZE, stdin);
     printf("\n");
 
-    SchemeListElem *ast = generate_ast(exp);
-    SchemeListElem *result = eval_exp(ast);
-
-    if (result == NULL) return 1;
+    SchemeAtom *ast = generate_ast(exp);
+    SchemeAtom *result = eval_exp(ast);
 
     printf(RESULT_ANNOUNCEMENT);
     print_elem(result);
