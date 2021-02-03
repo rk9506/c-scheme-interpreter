@@ -74,6 +74,10 @@ void test_quoted()
     run_test("should evaluate quoted symbols", "(quote sym)", "sym");
     run_test("should evaluate quoted lists", "(quote (define a 1))", "(define a 1)");
     run_test("should evaluate quoted empty list", "(quote ())", "()");
+
+    run_test("should evaluate shorthand quoted symbols", "'sym", "sym");
+    run_test("should evaluate shorthand quoted lists", "'(define a 1)", "(define a 1)");
+    run_test("should evaluate shorthand quoted empty list", "'()", "()");
 }
 
 void test_definition()
@@ -154,6 +158,21 @@ void test_compound_procedures()
               (golden-reciprocal 100))",
              "0.618034005165100097656");
 
+    run_test("should be able to add Church numerals",
+             "(begin \
+                 (define one \
+                     (lambda (f) (lambda (x) (f x)))) \
+                 (define two \
+                     (lambda (f) (lambda (x) (f (f x))))) \
+                 (define add-church \
+                     (lambda (a b) \
+                         (lambda (f) (lambda (x) ((a f) ((b f) x)))))) \
+                 (define (inc n) \
+                     (+ 1 n)) \
+                 (define (church-to-int n) \
+                     ((n inc) 0)) \
+                 (church-to-int (add-church one two)))",
+             "3");
 }
 
 void test_cond()

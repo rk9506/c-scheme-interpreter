@@ -28,7 +28,7 @@ bool is_tagged_list(SchemeAtom *atom, char *tag)
 {
     SchemeAtom *car_atom = car(atom);
 
-    if (atom != NULL)
+    if (atom != NULL && is_symbol(car_atom))
     {
         return strcmp(car_atom->val->sym, tag) == 0;
     }
