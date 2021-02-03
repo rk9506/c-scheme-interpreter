@@ -3,6 +3,7 @@
 #define LPAREN '('
 #define RPAREN ')'
 #define DOUBLEQUOTE '"'
+#define SINGLEQUOTE '\''
 #define BOOL_PREFIX '#'
 #define WHITESPACE " \t\n\v\f\r"
 
@@ -10,11 +11,13 @@ bool is_number_atom(char *atom);
 bool is_boolean_atom(char *atom);
 bool is_string_atom(char *atom);
 bool is_list(char *token);
+bool is_shorthand_quoted(char *token);
 
-char *pad_parentheses(char *exp);
+char *pad_special_characters(char *exp);
 
 SchemeAtom *parse_atom(char *atom, char **save_ptr);
 void parse_string(char *token, SchemeAtom *atom, char **save_ptr);
+SchemeAtom *parse_shorthand_quoted(char *token, char **save_ptr);
 
 void raise_parse_error(char *message)
 {
@@ -25,7 +28,7 @@ SchemeAtom *generate_ast(char *exp)
 {
     char **save_ptr = malloc(sizeof(char*));
 
-    exp = pad_parentheses(exp);
+    exp = pad_special_characters(exp);
 
     char *pch = strtok_r(exp, WHITESPACE, save_ptr);
 
@@ -66,6 +69,10 @@ SchemeAtom *parse_atom(char *token, char **save_ptr)
     {
         free_atom(atom);
         return parse_list(token, save_ptr);
+    } else if (is_shorthand_quoted(token))
+    {
+        free_atom(atom);
+        return parse_shorthand_quoted(token, save_ptr);
     } else
     {
         // Treat the atom as a symbol
@@ -164,14 +171,33 @@ SchemeAtom *parse_list(char *tokens, char **save_ptr)
     return result;
 }
 
-int count_parentheses(char *exp)
+bool is_shorthand_quoted(char *token)
+{
+    return *token == SINGLEQUOTE;
+}
+
+SchemeAtom *parse_shorthand_quoted(char *token, char **save_ptr)
+{
+    // Move past the '
+    token = strtok_r(NULL, WHITESPACE, save_ptr);
+
+    return cons(make_symbol("quote"), cons(parse_atom(token, save_ptr), the_empty_list()));
+}
+
+bool is_special_character(char c)
+{
+    return c == LPAREN || c == RPAREN || c == SINGLEQUOTE;
+}
+
+// Special characters are parentheses and singlequotes
+int count_special_characters(char *exp)
 {
     char c;
     int count = 0;
 
     while ((c = *exp))
     {
-        if (c == LPAREN || c == RPAREN)
+        if (is_special_character(c))
         {
             count++;
         }
@@ -182,9 +208,9 @@ int count_parentheses(char *exp)
     return count;
 }
 
-char *pad_parentheses(char *exp)
+char *pad_special_characters(char *exp)
 {
-    int num_parens = count_parentheses(exp);
+    int num_parens = count_special_characters(exp);
     size_t old_length = strlen(exp);
 
     size_t new_length = old_length + 2 * num_parens;
@@ -195,7 +221,7 @@ char *pad_parentheses(char *exp)
     char c;
     while ((c = *exp) != '\0')
     {
-        if (c == LPAREN || c == RPAREN)
+        if (is_special_character(c))
         {
             *(curr++) = ' ';
             *(curr++) = c;
