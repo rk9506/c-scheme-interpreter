@@ -54,5 +54,7 @@ SchemeAtom *cond_first_clause(SchemeAtom *clauses);
 SchemeAtom *cond_rest_clauses(SchemeAtom *clauses);
 bool is_cond_empty_clauses(SchemeAtom *clauses);
 
+bool is_let(SchemeAtom *exp);
+SchemeAtom *let_to_combination(SchemeAtom *exp);
 
 #endif // __SYNTAX_H_

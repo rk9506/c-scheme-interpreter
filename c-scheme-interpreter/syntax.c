@@ -242,3 +242,63 @@ bool is_cond_empty_clauses(SchemeAtom *clauses)
 {
     return is_null_list(clauses);
 }
+
+bool is_let(SchemeAtom *exp)
+{
+    return is_tagged_list(exp, "let");
+}
+
+SchemeAtom *let_binding_var(SchemeAtom *binding)
+{
+    return car(binding);
+}
+
+SchemeAtom *let_binding_exp(SchemeAtom *binding)
+{
+    return car(cdr(binding));
+}
+
+SchemeAtom *let_vars(SchemeAtom *bindings)
+{
+    if (is_null_list(bindings))
+    {
+        return the_empty_list();
+    } else
+    {
+        return cons(let_binding_var(car(bindings)), let_vars(cdr(bindings)));
+    }
+}
+
+SchemeAtom *let_exps(SchemeAtom *bindings)
+{
+    if (is_null_list(bindings))
+    {
+        return the_empty_list();
+    } else
+    {
+        return cons(let_binding_exp(car(bindings)), let_exps(cdr(bindings)));
+    }
+}
+
+SchemeAtom *let_bindings(SchemeAtom *exp)
+{
+    return car(cdr(exp));
+}
+
+SchemeAtom *let_body(SchemeAtom *exp)
+{
+    return cdr(cdr(exp));
+}
+
+SchemeAtom *make_combination(SchemeAtom *operator, SchemeAtom *operands)
+{
+    return cons(operator, operands);
+}
+
+SchemeAtom *let_to_combination(SchemeAtom *exp)
+{
+    SchemeAtom *bindings = let_bindings(exp);
+    SchemeAtom *op = make_lambda(let_vars(bindings), let_body(exp));
+
+    return make_combination(op, let_exps(bindings));
+}

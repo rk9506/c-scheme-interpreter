@@ -25,6 +25,7 @@ void ev_assignment();
 void ev_begin();
 void ev_sequence();
 void ev_if();
+void ev_let();
 
 void ev_cond();
 void cond_loop();
@@ -120,6 +121,9 @@ void eval_dispatch()
     } else if (is_cond(regs->exp))
     {
         ev_cond();
+    } else if (is_let(regs->exp))
+    {
+        ev_let();
     } else if (is_application(regs->exp))
     {
         ev_application();
@@ -401,4 +405,10 @@ void cond_eval_body()
     regs->env = restore();
     regs->exp = restore();
     regs->unev = restore();
+}
+
+void ev_let()
+{
+    regs->exp = let_to_combination(regs->exp);
+    eval_dispatch();
 }

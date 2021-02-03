@@ -14,6 +14,7 @@ void test_assignment();
 void test_primitive_procedures();
 void test_compound_procedures();
 void test_cond();
+void test_let();
 void test_lists();
 
 int num_passed;
@@ -55,6 +56,7 @@ void run_all_tests()
     test_primitive_procedures();
     test_compound_procedures();
     test_cond();
+    test_let();
     test_lists();
 
     printf("Total passed:\t%d\n", num_passed);
@@ -184,6 +186,13 @@ void test_cond()
     run_test("should be able to use cond with an else",
              "(cond ((= 1 0) 0) ((= 1 2) 2) (else 1))",
              "1");
+}
+
+void test_let()
+{
+    run_test("should be able to use let",
+             "(let ((x 1) (y 2)) (+ x y))",
+             "3");
 }
 
 void test_lists()
