@@ -9,11 +9,10 @@ typedef struct
     SchemeAtom *argl;
     // void (*continue)();
     SchemeAtom *unev;
+    SchemeAtom *the_stack;
 } Registers;
 
 static Registers *regs;
-
-static Stack *the_stack;
 
 void eval_dispatch();
 void ev_self_eval();
@@ -37,36 +36,42 @@ void apply_dispatch();
 void primitive_apply();
 void compound_apply();
 
-void save(void *val)
+void save(SchemeAtom *val)
 {
-    push(val, the_stack);
+    regs->the_stack = cons(val, regs->the_stack);
 }
 
 void *restore()
 {
-    return pop(the_stack);
+    if (is_null_list(regs->the_stack))
+    {
+        debug_log("Trying to restore from empty stack!");
+        return NULL;
+    }
+
+    SchemeAtom *top = car(regs->the_stack);
+
+    regs->the_stack = cdr(regs->the_stack);
+
+    return top;
 }
 
 // Used in repl.c
 void initialise_regs()
 {
     regs = malloc(sizeof(Registers));
-    regs->exp = NULL;
-    regs->env = NULL;
-    regs->val = NULL;
-    regs->unev = NULL;
-    regs->argl = NULL;
-    regs->proc = NULL;
+    regs->exp = the_empty_list();
+    regs->env = the_empty_list();
+    regs->val = the_empty_list();
+    regs->unev = the_empty_list();
+    regs->argl = the_empty_list();
+    regs->proc = the_empty_list();
+    regs->the_stack = the_empty_list();
 }
 
 void initialise_env()
 {
     regs->env = get_global_environment();
-}
-
-void initialise_stack()
-{
-    the_stack = make_stack();
 }
 
 void initialise_eval()
@@ -75,7 +80,6 @@ void initialise_eval()
     setup_global_environment();
     initialise_regs();
     initialise_env();
-    initialise_stack();
 }
 
 void free_regs()

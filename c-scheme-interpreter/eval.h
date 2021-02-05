@@ -3,7 +3,6 @@
 
 #include "syntax.h"
 #include "env.h"
-#include "stack.h"
 #include "heap.h"
 
 void initialise_regs();
