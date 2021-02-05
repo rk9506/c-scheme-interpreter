@@ -7,7 +7,7 @@
 
 #include <stdlib.h>
 
-#define HEAP_SIZE 1024 * 1024
+#define HEAP_SIZE 1024 * 1024 * 256
 
 void initialise_heap();
 

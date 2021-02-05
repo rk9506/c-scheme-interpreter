@@ -4,6 +4,7 @@
 #include "types.h"
 #include "parser.h"
 #include "heap.h"
+#include "utils.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -34,5 +35,7 @@ SchemeAtom *primitive_cons(SchemeAtom *args);
 SchemeAtom *primitive_car(SchemeAtom *args);
 SchemeAtom *primitive_cdr(SchemeAtom *args);
 SchemeAtom *primitive_list(SchemeAtom *args);
+SchemeAtom *primitive_is_null(SchemeAtom *args);
+SchemeAtom *primitive_length(SchemeAtom *args);
 
 #endif // __PRIMITIVE_PROCEDURES_H_

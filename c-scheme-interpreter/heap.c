@@ -16,8 +16,6 @@ SchemeAtom *car(SchemeAtom *pair)
     if (!is_pair(pair))
     {
         printf("Trying to car a non-pair!\n`");
-        print_atom(pair);
-        printf("\n");
         return NULL;
     }
 

@@ -88,13 +88,6 @@ void insert_bindings(SchemeAtom *vars, SchemeAtom *vals, Environment *env)
     insert_bindings(cdr(vars), cdr(vals), env);
 }
 
-unsigned int list_length(SchemeAtom *l)
-{
-    if (is_null_list(l)) return 0;
-
-    return 1 + list_length(cdr(l));
-}
-
 Environment *extend_environment(SchemeAtom *vars, SchemeAtom *vals, Environment *env)
 {
     unsigned int vars_length = list_length(vars);
@@ -155,6 +148,8 @@ void add_primitive_procedures()
     define_primitive("car", &primitive_car);
     define_primitive("cdr", &primitive_cdr);
     define_primitive("list", &primitive_list);
+    define_primitive("null?", &primitive_is_null);
+    define_primitive("length", &primitive_length);
 }
 
 void print_env(Environment *env)
@@ -166,8 +161,18 @@ void print_env(Environment *env)
     print_env(enclosing_env(env));
 }
 
+void add_constants()
+{
+    define_variable("nil", the_empty_list(), the_global_environment);
+    define_variable("true", make_boolean(true), the_global_environment);
+    define_variable("false", make_boolean(false), the_global_environment);
+}
+
 void setup_global_environment()
 {
     the_global_environment = make_environment();
+
+    add_constants();
+
     add_primitive_procedures();
 }

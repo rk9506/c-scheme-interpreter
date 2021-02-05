@@ -64,4 +64,6 @@ bool is_string(SchemeAtom *atom);
 bool is_pair(SchemeAtom *atom);
 bool is_boolean(SchemeAtom *atom);
 
+unsigned int list_length(SchemeAtom *l);
+
 #endif // __TYPES_H_

@@ -7,6 +7,7 @@
 #include "printer.h"
 #include "debug.h"
 #include "heap.h"
+#include "utils.h"
 
 #include <stdio.h>
 

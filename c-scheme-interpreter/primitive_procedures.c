@@ -37,7 +37,7 @@ float get_number_cadr(SchemeAtom *args)
 
 bool get_boolean_car(SchemeAtom *args)
 {
-    SchemeAtom *atom = car(atom);
+    SchemeAtom *atom = car(args);
 
     if (!is_boolean(atom))
     {
@@ -63,7 +63,7 @@ bool get_boolean_cadr(SchemeAtom *args)
 
 char *get_string_car(SchemeAtom *args)
 {
-    SchemeAtom *atom = car(atom);
+    SchemeAtom *atom = car(args);
 
     if (!is_string(atom))
     {
@@ -180,10 +180,7 @@ SchemeAtom *primitive_not(SchemeAtom *args)
 
 SchemeAtom *primitive_display(SchemeAtom *args)
 {
-    char *arg1 = get_string_car(args);
-
-    printf("%s", arg1);
-
+    print_elem(car(args));
     return make_symbol("ok");
 }
 
@@ -229,4 +226,16 @@ SchemeAtom *primitive_list(SchemeAtom *args)
     }
 
     return cons(car(args), primitive_list(cdr(args)));
+}
+
+SchemeAtom *primitive_is_null(SchemeAtom *args)
+{
+    return make_boolean(is_null_list(car(args)));
+}
+
+SchemeAtom *primitive_length(SchemeAtom *args)
+{
+    SchemeAtom *l = car(args);
+
+    return make_number(list_length(l));
 }

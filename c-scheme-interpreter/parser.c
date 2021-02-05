@@ -71,7 +71,6 @@ SchemeAtom *parse_atom(char *token, char **save_ptr)
         return parse_list(token, save_ptr);
     } else if (is_shorthand_quoted(token))
     {
-        free_atom(atom);
         return parse_shorthand_quoted(token, save_ptr);
     } else
     {
