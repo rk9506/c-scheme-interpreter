@@ -36,13 +36,11 @@ SchemeAtom *generate_ast(char *exp)
 
     char *pch = strtok_r(exp, WHITESPACE, save_ptr);
 
-    SchemeAtom *elem = parse_atom(pch, save_ptr);
+    parsing = parse_atom(pch, save_ptr);
 
     debug_log("Completed parsing\n");
 
-    parsing = NULL;
-
-    return elem;
+    return parsing;
 }
 
 SchemeAtom *parse_atom(char *token, char **save_ptr)

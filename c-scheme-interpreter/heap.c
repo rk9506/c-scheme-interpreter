@@ -65,8 +65,6 @@ void set_cdr(SchemeAtom *pair, SchemeAtom *atom)
 
 SchemeAtom *cons(SchemeAtom *a, SchemeAtom *b)
 {
-    // printf("Heap size: %d\n", free_ptr);
-
     if (free_ptr == HEAP_SIZE)
     {
         debug_log("Performing garbage collection...\n");

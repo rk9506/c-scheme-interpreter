@@ -3,6 +3,10 @@
 
 #include "types.h"
 
+// 8 registers here + parsing register in parser.c + entry register in table.c
+// + primitive_temp in primitive_procedures.c
+#define NUM_REGS 11
+
 typedef struct
 {
     SchemeAtom *exp;

@@ -1,6 +1,6 @@
 #include "gc.h"
 
-#define BROKEN_HEART_TAG -1
+#define BROKEN_HEART_TAG "broken-heart"
 
 SchemeAtom **new_cars;
 SchemeAtom **new_cdrs;
@@ -15,7 +15,7 @@ SchemePairPointer scan;
 void relocate_old_result_in_new();
 void gc_loop();
 void gc_flip();
-void debug_dump_heap(SchemeAtom **the_cars, SchemeAtom **the_cdrs);
+bool is_broken_heart(SchemeAtom *atom);
 
 SchemeAtom *get_populated_root()
 {
@@ -45,13 +45,16 @@ SchemeAtom *get_populated_root()
     set_car(current, regs->the_stack);
     current = cdr(current);
 
-    set_car(current, parsing);
-    current = cdr(current);
+    /* set_car(current, parsing); */
+    /* current = cdr(current); */
 
-    set_car(current, entry);
-    current = cdr(current);
+    /* set_car(current, entry); */
+    /* current = cdr(current); */
 
-    set_car(current, primitive_temp);
+    /* set_car(current, primitive_temp); */
+    /* current = cdr(current); */
+
+    set_car(current, regs->temp);
 
     return root;
 }
@@ -68,10 +71,14 @@ void collect_garbage()
     debug_log("Old heap: \n");
     debug_dump_heap(the_cars, the_cdrs);
 
+
     // begin-garbage-collection
     free_ptr = 0;
     scan = 0;
     old = get_populated_root();
+
+    debug_log("Old root");
+    debug_log_atom(get_populated_root());
 
     relocate_old_result_in_new();
 
@@ -82,10 +89,12 @@ void collect_garbage()
 
 void gc_loop()
 {
-    if (scan > free_ptr)
+    if (scan == free_ptr)
     {
         gc_flip();
         debug_dump_heap(the_cars, the_cdrs);
+        debug_log("New root");
+        debug_log_atom(get_populated_root());
         return;
     }
 
@@ -112,7 +121,7 @@ void sweep_garbage(SchemeAtom **vec)
     for (i = 0; i < HEAP_SIZE; i++)
     {
         curr = vec[i];
-        if (curr != NULL && curr != (SchemeAtom*) BROKEN_HEART_TAG)
+        if (curr != NULL && !is_broken_heart(curr))
         {
             free_atom(curr);
         }
@@ -131,29 +140,64 @@ void gc_flip()
     the_cdrs = new_cdrs;
 }
 
-bool is_broken_heart(SchemeAtom *pair)
+bool is_broken_heart(SchemeAtom *atom)
 {
-    return (int) pair == BROKEN_HEART_TAG;
+    return symbol_eq_str(atom, BROKEN_HEART_TAG);
+}
+
+SchemeAtom *make_broken_heart()
+{
+    return make_symbol(BROKEN_HEART_TAG);
+}
+
+bool is_pointer_to_pair(SchemeAtom *atom)
+{
+    if (atom == NULL) return false;
+
+    return atom->type_tag == SCHEME_PAIR_POINTER || atom->type_tag == SCHEME_PROCEDURE;
+}
+
+SchemePairPointer get_pair_pointer(SchemeAtom *atom)
+{
+    if (atom->type_tag == SCHEME_PROCEDURE)
+    {
+        return atom->val->proc->val->pair;
+    } else
+    {
+        return atom->val->pair;
+    }
+}
+
+void replace_pair_pointer(SchemeAtom *atom, SchemePairPointer new_ptr)
+{
+    if (is_compound_procedure(atom))
+    {
+        atom->val->proc->val->pair = new_ptr;
+    } else
+    {
+        atom->val->pair = new_ptr;
+    }
 }
 
 void relocate_old_result_in_new()
 {
-    if (is_pair(old))
+    if (is_pointer_to_pair(old))
     {
+        SchemePairPointer old_ptr = get_pair_pointer(old);
         // pair
-        oldcr = the_cars[old->val->pair];
+        oldcr = the_cars[old_ptr];
 
         if (is_broken_heart(oldcr))
         {
             // already-moved
-            new = the_cdrs[old->val->pair];
+            new = the_cdrs[old_ptr];
+            // replace_pair_pointer(new, the_cdrs[old_ptr]->val->num);
             return;
         } else
         {
-            SchemePairPointer old_ptr = old->val->pair;
             SchemePairPointer new_ptr = free_ptr;
-            old->val->pair = new_ptr;
             new = old;
+            replace_pair_pointer(new, new_ptr);
 
             // Update free pointer
             free_ptr++;
@@ -164,7 +208,7 @@ void relocate_old_result_in_new()
             new_cdrs[new_ptr] = oldcr;
 
             // Construct the broken heart
-            the_cars[old_ptr] = (SchemeAtom*) BROKEN_HEART_TAG;
+            the_cars[old_ptr] = make_broken_heart();
             the_cdrs[old_ptr] = new;
             return;
         }

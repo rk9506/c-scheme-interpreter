@@ -1,8 +1,5 @@
 #include "eval.h"
 
-// 8 registers here + parsing register in parser.c + entry register in table.c
-#define NUM_REGS 10
-
 // Pre-allocated list which will be used to hold all the registers for
 // garbage collection
 SchemeAtom *root;
@@ -171,7 +168,9 @@ SchemeAtom *append_list(SchemeAtom *a, SchemeAtom *b)
 {
     if (is_null_list(a)) return b;
 
-    regs->temp = cons(car(a), append_list(cdr(a), b));
+    regs->temp = a;
+    regs->temp = append_list(cdr(a), b);
+    regs->temp = cons(car(a), regs->temp);
 
     return regs->temp;
 }
@@ -179,8 +178,9 @@ SchemeAtom *append_list(SchemeAtom *a, SchemeAtom *b)
 SchemeAtom *adjoin_arg(SchemeAtom *arg, SchemeAtom *arglist)
 {
     regs->temp = cons(arg, the_empty_list());
+    regs->temp = append_list(arglist, regs->temp);
 
-    return append_list(arglist, regs->temp);
+    return regs->temp;
 }
 
 void ev_application()

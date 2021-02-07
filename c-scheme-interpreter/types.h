@@ -3,6 +3,7 @@
 
 #include <stdbool.h>
 #include <stdlib.h>
+#include <string.h>
 
 typedef char* SchemeString;
 typedef float SchemeNumber;
@@ -56,7 +57,10 @@ bool is_number(SchemeAtom *atom);
 bool is_string(SchemeAtom *atom);
 bool is_pair(SchemeAtom *atom);
 bool is_boolean(SchemeAtom *atom);
+bool is_compound_procedure(SchemeAtom *atom);
 
 unsigned int list_length(SchemeAtom *l);
+
+bool symbol_eq_str(SchemeAtom *symbol, char *str);
 
 #endif // __TYPES_H_

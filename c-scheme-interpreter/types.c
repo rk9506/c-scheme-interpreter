@@ -128,3 +128,14 @@ bool is_boolean(SchemeAtom *atom)
     return atom->type_tag == SCHEME_BOOLEAN;
 }
 
+bool is_compound_procedure(SchemeAtom *atom)
+{
+    if (atom == NULL) return false;
+
+    return atom->type_tag == SCHEME_PROCEDURE;
+}
+
+bool symbol_eq_str(SchemeAtom *symbol, char *str)
+{
+    return is_symbol(symbol) && strcmp(symbol->val->sym, str) == 0;
+}
