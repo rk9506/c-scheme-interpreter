@@ -1,18 +1,13 @@
 #include "eval.h"
 
-typedef struct
-{
-    SchemeAtom *exp;
-    Environment *env;
-    SchemeAtom *val;
-    SchemeAtom *proc;
-    SchemeAtom *argl;
-    // void (*continue)();
-    SchemeAtom *unev;
-    SchemeAtom *the_stack;
-} Registers;
+// 8 registers here + parsing register in parser.c + entry register in table.c
+#define NUM_REGS 10
 
 static Registers *regs;
+
+// Pre-allocated list which will be used to hold all the registers for
+// garbage collection
+SchemeAtom *root;
 
 void eval_dispatch();
 void ev_self_eval();
@@ -41,7 +36,7 @@ void save(SchemeAtom *val)
     regs->the_stack = cons(val, regs->the_stack);
 }
 
-void *restore()
+SchemeAtom *restore()
 {
     if (is_null_list(regs->the_stack))
     {
@@ -69,9 +64,40 @@ void initialise_regs()
     regs->the_stack = the_empty_list();
 }
 
+Registers *get_regs()
+{
+    return regs;
+}
+
 void initialise_env()
 {
     regs->env = get_global_environment();
+}
+
+SchemeAtom *pad_list(SchemeAtom *l, int size)
+{
+    if (size == 0)
+    {
+        return l;
+    } else
+    {
+        return pad_list(cons(the_empty_list(), l), size - 1);
+    }
+}
+
+void initialise_root()
+{
+    root = pad_list(root, NUM_REGS);
+}
+
+SchemeAtom *get_root()
+{
+    return root;
+}
+
+void set_root(SchemeAtom *new_root)
+{
+    root = new_root;
 }
 
 void initialise_eval()
@@ -80,6 +106,7 @@ void initialise_eval()
     setup_global_environment();
     initialise_regs();
     initialise_env();
+    initialise_root();
 }
 
 void free_regs()
@@ -164,14 +191,16 @@ SchemeAtom *append_list(SchemeAtom *a, SchemeAtom *b)
 {
     if (is_null_list(a)) return b;
 
-    return cons(car(a), append_list(cdr(a), b));
+    regs->temp = cons(car(a), append_list(cdr(a), b));
+
+    return regs->temp;
 }
 
 SchemeAtom *adjoin_arg(SchemeAtom *arg, SchemeAtom *arglist)
 {
-    SchemeAtom *singleton = cons(arg, the_empty_list());
+    regs->temp = cons(arg, the_empty_list());
 
-    return append_list(arglist, singleton);
+    return append_list(arglist, regs->temp);
 }
 
 void ev_application()

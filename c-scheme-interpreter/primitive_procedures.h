@@ -9,6 +9,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+SchemeAtom *primitive_temp;
+
 SchemeAtom *apply_primitive_procedure(SchemeAtom *proc_elem, SchemeAtom *args);
 
 SchemeAtom *primitive_add(SchemeAtom *args);

@@ -4,6 +4,8 @@
 #include "types.h"
 #include "printer.h"
 #include "heap.h"
+#include "eval.h"
+#include "debug.h"
 
 #include <stdbool.h>
 #include <string.h>
@@ -11,6 +13,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <ctype.h>
+
+SchemeAtom *parsing;
 
 SchemeAtom *generate_ast(char *exp);
 

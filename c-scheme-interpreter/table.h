@@ -8,6 +8,8 @@
 #include <string.h>
 #include <stdio.h>
 
+SchemeAtom *entry;
+
 SchemeAtom *entry_value(SchemeAtom *entry);
 
 SchemeAtom *insert(char *key, SchemeAtom *value, SchemeAtom *table);

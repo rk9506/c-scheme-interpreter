@@ -4,10 +4,15 @@
 #include "types.h"
 #include "debug.h"
 #include "printer.h"
+#include "heap_utils.h"
 
 #include <stdlib.h>
 
-#define HEAP_SIZE 1024 * 1024 * 256
+#define HEAP_SIZE 1024 * 1024 * 8
+
+SchemeAtom **the_cars;
+SchemeAtom **the_cdrs;
+SchemePairPointer free_ptr;
 
 void initialise_heap();
 

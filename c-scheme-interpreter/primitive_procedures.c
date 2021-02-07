@@ -201,7 +201,9 @@ SchemeAtom *primitive_read(SchemeAtom *args)
 
 SchemeAtom *primitive_cons(SchemeAtom *args)
 {
-    return cons(car(args), car(cdr(args)));
+    primitive_temp = cons(car(args), car(cdr(args)));
+
+    return primitive_temp;
 }
 
 SchemeAtom *primitive_car(SchemeAtom *args)
@@ -220,12 +222,7 @@ SchemeAtom *primitive_cdr(SchemeAtom *args)
 
 SchemeAtom *primitive_list(SchemeAtom *args)
 {
-    if (is_null_list(args))
-    {
-        return the_empty_list();
-    }
-
-    return cons(car(args), primitive_list(cdr(args)));
+    return args;
 }
 
 SchemeAtom *primitive_is_null(SchemeAtom *args)

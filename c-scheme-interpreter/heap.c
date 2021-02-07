@@ -1,9 +1,5 @@
 #include "heap.h"
 
-SchemeAtom **the_cars;
-SchemeAtom **the_cdrs;
-SchemePairPointer free_ptr;
-
 void initialise_heap()
 {
     the_cars = calloc(HEAP_SIZE, sizeof(SchemeAtom*));
@@ -15,7 +11,9 @@ SchemeAtom *car(SchemeAtom *pair)
 {
     if (!is_pair(pair))
     {
-        printf("Trying to car a non-pair!\n`");
+        printf("Trying to car a non-pair!\n");
+        print_elem(pair);
+        printf("\n");
         return NULL;
     }
 
@@ -28,8 +26,9 @@ SchemeAtom *cdr(SchemeAtom *pair)
 {
     if (!is_pair(pair))
     {
-        printf("Trying to cdr a non-pair!\n`");
-        print_atom(pair);
+        printf("Trying to cdr a non-pair!\n");
+        print_elem(pair);
+        printf("\n");
         return NULL;
     }
 
@@ -42,7 +41,7 @@ void set_car(SchemeAtom *pair, SchemeAtom *atom)
 {
     if (!is_pair(pair))
     {
-        printf("Trying to set_car on a non-pair!\n`");
+        printf("Trying to set_car on a non-pair!\n");
         print_atom(pair);
         return;
     }
@@ -55,7 +54,7 @@ void set_cdr(SchemeAtom *pair, SchemeAtom *atom)
 {
     if (!is_pair(pair))
     {
-        printf("Trying to set_cdr on a non-pair!\n`");
+        printf("Trying to set_cdr on a non-pair!\n");
         print_atom(pair);
         return;
     }
@@ -66,11 +65,13 @@ void set_cdr(SchemeAtom *pair, SchemeAtom *atom)
 
 SchemeAtom *cons(SchemeAtom *a, SchemeAtom *b)
 {
+    // printf("Heap size: %d\n", free_ptr);
+
     if (free_ptr == HEAP_SIZE)
     {
-        printf("Heap is full!`n`");
+        debug_log("Performing garbage collection...\n");
+        perform_gc();
     }
-
 
     SchemeAtom *atom = make_atom();
     SchemePrimitive *prim = make_primitive();
@@ -83,4 +84,14 @@ SchemeAtom *cons(SchemeAtom *a, SchemeAtom *b)
     free_ptr++;
 
     return atom;
+}
+
+SchemePairPointer get_free_ptr()
+{
+    return free_ptr;
+}
+
+void set_free_ptr(SchemePairPointer new_free)
+{
+    free_ptr = new_free;
 }

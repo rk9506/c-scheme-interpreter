@@ -51,6 +51,7 @@ SchemePrimitive *make_primitive();
 SchemeAtom *make_number(float num);
 SchemeAtom *make_boolean(bool boolean);
 SchemeAtom *make_symbol(char *sym);
+SchemeAtom *make_pair(SchemePairPointer ptr);
 SchemeAtom *make_procedure(SchemeAtom *parameters,
                                SchemeAtom *body,
                                SchemeAtom *env);

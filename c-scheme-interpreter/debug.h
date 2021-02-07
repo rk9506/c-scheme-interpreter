@@ -8,9 +8,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#define DEBUGGING true
+#define DEBUGGING false
 
 void debug_log(char *message);
+void debug_log_atom(SchemeAtom *atom);
 void debug_log_env(SchemeAtom *env);
 
 #endif // __DEBUG_H_

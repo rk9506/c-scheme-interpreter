@@ -26,6 +26,9 @@ void raise_parse_error(char *message)
 
 SchemeAtom *generate_ast(char *exp)
 {
+    debug_log("Started parsing\n");
+
+    parsing = NULL;
     char **save_ptr = malloc(sizeof(char*));
 
     exp = pad_special_characters(exp);
@@ -33,6 +36,8 @@ SchemeAtom *generate_ast(char *exp)
     char *pch = strtok_r(exp, WHITESPACE, save_ptr);
 
     SchemeAtom *elem = parse_atom(pch, save_ptr);
+
+    debug_log("Completed parsing\n");
 
     return elem;
 }
@@ -159,15 +164,22 @@ SchemeAtom *parse_list(char *tokens, char **save_ptr)
         return NULL;
     }
 
-    SchemeAtom *result = cons(the_empty_list(), the_empty_list());
+    parsing = cons(the_empty_list(), the_empty_list());
+
+    save(parsing);
 
     // Parse first element
-    set_car(result, parse_atom(tokens, save_ptr));
+    set_car(parsing, parse_atom(tokens, save_ptr));
+
+    parsing = restore();
+    save(parsing);
 
     // Parse the rest of the elements
-    set_cdr(result, parse_list(tokens, save_ptr));
+    set_cdr(parsing, parse_list(tokens, save_ptr));
 
-    return result;
+    parsing = restore();
+
+    return parsing;
 }
 
 bool is_shorthand_quoted(char *token)
@@ -180,7 +192,11 @@ SchemeAtom *parse_shorthand_quoted(char *token, char **save_ptr)
     // Move past the '
     token = strtok_r(NULL, WHITESPACE, save_ptr);
 
-    return cons(make_symbol("quote"), cons(parse_atom(token, save_ptr), the_empty_list()));
+    parsing = cons(parse_atom(token, save_ptr), the_empty_list());
+
+    parsing = cons(make_symbol("quote"), parsing);
+
+    return parsing;
 }
 
 bool is_special_character(char c)

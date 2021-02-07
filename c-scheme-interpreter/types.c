@@ -18,8 +18,18 @@ SchemeAtom *make_atom()
 void free_atom(SchemeAtom *atom)
 {
     if (atom == NULL) return;
+
     free(atom);
-    free(atom->val);
+
+    if (atom->type_tag == SCHEME_PROCEDURE)
+    {
+        free(atom->val->proc);
+    }
+
+    if (atom->val != NULL)
+    {
+        free(atom->val);
+    }
 }
 
 SchemePrimitive *make_primitive()
@@ -57,6 +67,17 @@ SchemeAtom *make_symbol(char *sym)
     atom->type_tag = SCHEME_SYMBOL;
     atom->val = make_primitive();
     atom->val->sym = sym;
+
+    return atom;
+}
+
+SchemeAtom *make_pair(SchemePairPointer ptr)
+{
+    SchemeAtom *atom = make_atom();
+
+    atom->type_tag = SCHEME_PAIR_POINTER;
+    atom->val = make_primitive();
+    atom->val->pair = ptr;
 
     return atom;
 }
@@ -125,3 +146,4 @@ bool is_boolean(SchemeAtom *atom)
 
     return atom->type_tag == SCHEME_BOOLEAN;
 }
+

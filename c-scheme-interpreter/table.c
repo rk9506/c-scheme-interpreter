@@ -2,6 +2,7 @@
 
 SchemeAtom *make_table()
 {
+    entry = NULL;
     return the_empty_list();
 }
 
@@ -9,7 +10,9 @@ SchemeAtom *make_entry(char *key, SchemeAtom *value)
 {
     SchemeAtom *key_atom = make_symbol(key);
 
-    return cons(key_atom, cons(value, the_empty_list()));
+    entry = cons(value, the_empty_list());
+
+    return cons(key_atom, entry);
 }
 
 SchemeAtom *entry_value(SchemeAtom *entry)
@@ -19,7 +22,7 @@ SchemeAtom *entry_value(SchemeAtom *entry)
 
 SchemeAtom *insert(char *key, SchemeAtom *value, SchemeAtom *table)
 {
-    SchemeAtom *entry = make_entry(key, value);
+    entry = make_entry(key, value);
 
     SchemeAtom *new_table = cons(entry, table);
 
