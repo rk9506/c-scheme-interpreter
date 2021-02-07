@@ -4,26 +4,13 @@
 #include "syntax.h"
 #include "env.h"
 #include "heap.h"
+#include "procedure_utils.h"
+#include "registers.h"
 
-typedef struct
-{
-    SchemeAtom *exp;
-    SchemeAtom *env;
-    SchemeAtom *val;
-    SchemeAtom *proc;
-    SchemeAtom *argl;
-    // void (*continue)();
-    SchemeAtom *unev;
-    SchemeAtom *the_stack;
-    SchemeAtom *temp;
-} Registers;
-
-void initialise_regs();
 void initialise_env();
 void initialise_eval();
 
 void free_regs();
-Registers *get_regs();
 
 SchemeAtom *get_root();
 void set_root(SchemeAtom *new_root);

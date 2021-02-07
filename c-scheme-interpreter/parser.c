@@ -29,6 +29,7 @@ SchemeAtom *generate_ast(char *exp)
     debug_log("Started parsing\n");
 
     parsing = NULL;
+
     char **save_ptr = malloc(sizeof(char*));
 
     exp = pad_special_characters(exp);
@@ -38,6 +39,8 @@ SchemeAtom *generate_ast(char *exp)
     SchemeAtom *elem = parse_atom(pch, save_ptr);
 
     debug_log("Completed parsing\n");
+
+    parsing = NULL;
 
     return elem;
 }

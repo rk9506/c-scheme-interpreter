@@ -84,7 +84,7 @@ void print_symbol(SchemeSymbol sym)
 void print_procedure(SchemeProcedure *proc)
 {
     printf("<procedure ");
-    print_list(proc->body);
+    print_list(procedure_body(proc));
     printf(">");
 }
 

@@ -3,8 +3,6 @@
 // 8 registers here + parsing register in parser.c + entry register in table.c
 #define NUM_REGS 10
 
-static Registers *regs;
-
 // Pre-allocated list which will be used to hold all the registers for
 // garbage collection
 SchemeAtom *root;
@@ -49,24 +47,6 @@ SchemeAtom *restore()
     regs->the_stack = cdr(regs->the_stack);
 
     return top;
-}
-
-// Used in repl.c
-void initialise_regs()
-{
-    regs = malloc(sizeof(Registers));
-    regs->exp = the_empty_list();
-    regs->env = the_empty_list();
-    regs->val = the_empty_list();
-    regs->unev = the_empty_list();
-    regs->argl = the_empty_list();
-    regs->proc = the_empty_list();
-    regs->the_stack = the_empty_list();
-}
-
-Registers *get_regs()
-{
-    return regs;
 }
 
 void initialise_env()
@@ -286,9 +266,9 @@ void primitive_apply()
 
 void compound_apply()
 {
-    regs->unev = regs->proc->val->proc->parameters;
-    regs->env = extend_environment(regs->unev, regs->argl, regs->proc->val->proc->env);
-    regs->unev = regs->proc->val->proc->body;
+    regs->unev = procedure_parameters(regs->proc->val->proc);
+    regs->env = extend_environment(regs->unev, regs->argl, procedure_env(regs->proc->val->proc));
+    regs->unev = procedure_body(regs->proc->val->proc);
     ev_sequence();
 }
 

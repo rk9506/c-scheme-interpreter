@@ -8,7 +8,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#define DEBUGGING false
+#define DEBUGGING true
 
 void debug_log(char *message);
 void debug_log_atom(SchemeAtom *atom);

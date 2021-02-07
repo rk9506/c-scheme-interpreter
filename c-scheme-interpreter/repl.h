@@ -5,6 +5,7 @@
 #include "printer.h"
 #include "eval.h"
 #include "env.h"
+#include "registers.h"
 
 #include <stdio.h>
 

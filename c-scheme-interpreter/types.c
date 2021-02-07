@@ -82,25 +82,6 @@ SchemeAtom *make_pair(SchemePairPointer ptr)
     return atom;
 }
 
-SchemeAtom *make_procedure(SchemeAtom *parameters,
-                               SchemeAtom *body,
-                               SchemeAtom *env)
-{
-    SchemeProcedure *proc = malloc(sizeof(SchemeProcedure));
-
-    proc->parameters = parameters;
-    proc->body = body;
-    proc->env = env;
-
-    SchemeAtom *atom = make_atom();
-
-    atom->type_tag = SCHEME_PROCEDURE;
-    atom->val = make_primitive();
-    atom->val->proc = proc;
-
-    return atom;
-}
-
 SchemeAtom *make_primitive_procedure(PrimitiveProcedure proc)
 {
     SchemeAtom *atom = make_atom();

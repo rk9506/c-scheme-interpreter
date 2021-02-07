@@ -15,12 +15,7 @@ typedef unsigned int SchemePairPointer;
 
 typedef enum { SCHEME_STRING, SCHEME_NUMBER, SCHEME_BOOLEAN, SCHEME_SYMBOL, SCHEME_PROCEDURE, PRIMITIVE_PROCEDURE, SCHEME_PAIR_POINTER } TypeTag;
 
-typedef struct
-{
-    struct SchemeAtom *parameters;
-    struct SchemeAtom *body;
-    struct SchemeAtom *env;
-} SchemeProcedure;
+typedef struct SchemeAtom SchemeProcedure;
 
 // A primitive procedure is a function which takes a pointer
 // to a list of arguments, and returns a result as a SchemeAtom
@@ -52,9 +47,6 @@ SchemeAtom *make_number(float num);
 SchemeAtom *make_boolean(bool boolean);
 SchemeAtom *make_symbol(char *sym);
 SchemeAtom *make_pair(SchemePairPointer ptr);
-SchemeAtom *make_procedure(SchemeAtom *parameters,
-                               SchemeAtom *body,
-                               SchemeAtom *env);
 SchemeAtom *make_primitive_procedure(PrimitiveProcedure proc);
 
 void free_atom(SchemeAtom *atom);

@@ -124,7 +124,7 @@ void add_primitive_procedures()
     define_primitive("-", &primitive_subtract);
     define_primitive("*", &primitive_multiply);
     define_primitive("/", &primitive_divide);
-    define_primitive("%", &primitive_remainder);
+    define_primitive("remainder", &primitive_remainder);
 
     // Comparison operators
     define_primitive("=", &primitive_number_equality);
