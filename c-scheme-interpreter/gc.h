@@ -7,6 +7,7 @@
 #include "parser.h"
 #include "table.h"
 #include "primitive_procedures.h"
+#include "hash_table.h"
 
 #include <stdlib.h>
 #include <stdbool.h>

@@ -1,10 +1,26 @@
 #include "heap.h"
 
+void initialise_cdrs();
+
 void initialise_heap()
 {
     the_cars = calloc(HEAP_SIZE, sizeof(SchemeAtom*));
     the_cdrs = calloc(HEAP_SIZE, sizeof(SchemeAtom*));
+
+    initialise_cdrs();
     free_ptr = 0;
+}
+
+// Initialise the cdrs such that each pair links to the next
+// consecutive pair. We do this so that we can use a pointer to
+// the first pair as our "free list" for consing.
+void initialise_cdrs()
+{
+    int i;
+    for (i = 0; i < HEAP_SIZE - 1; i++)
+    {
+        the_cdrs[i] = make_pair(i + 1);
+    }
 }
 
 SchemeAtom *car(SchemeAtom *pair)
@@ -65,21 +81,26 @@ void set_cdr(SchemeAtom *pair, SchemeAtom *atom)
 
 SchemeAtom *cons(SchemeAtom *a, SchemeAtom *b)
 {
-    if (free_ptr == HEAP_SIZE)
+    SchemeAtom *free_cdr = the_cdrs[free_ptr];
+
+    if (is_null_list(free_cdr))
     {
-        debug_log("Performing garbage collection...\n");
         perform_gc();
+        free_cdr = the_cdrs[free_ptr];
     }
 
-    SchemeAtom *atom = make_atom();
-    SchemePrimitive *prim = make_primitive();
-    atom->val = prim;
-    atom->type_tag = SCHEME_PAIR_POINTER;
-    atom->val->pair = free_ptr;
+    if (is_null_list(free_cdr))
+    {
+        throw_exception("That's all folks: we've run out of memory!");
+    }
+
+    SchemeAtom *atom = make_pair(free_ptr);
 
     the_cars[free_ptr] = a;
     the_cdrs[free_ptr] = b;
-    free_ptr++;
+
+    free_ptr = free_cdr->val->pair;
+    // free_atom(free_cdr);
 
     return atom;
 }

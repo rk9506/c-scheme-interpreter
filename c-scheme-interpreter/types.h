@@ -1,6 +1,7 @@
 #ifndef __TYPES_H_
 #define __TYPES_H_
 
+#include <stdio.h>
 #include <stdbool.h>
 #include <stdlib.h>
 #include <string.h>
@@ -12,7 +13,7 @@ typedef char* SchemeSymbol;
 
 // A SchemePairPointer is an index into the_cars/the_cdrs, i.e. it is
 // a pointer within our "Scheme virtual machine", as opposed to a C pointer
-typedef unsigned int SchemePairPointer;
+typedef int SchemePairPointer;
 
 typedef enum { SCHEME_STRING, SCHEME_NUMBER, SCHEME_BOOLEAN, SCHEME_SYMBOL, SCHEME_PROCEDURE, PRIMITIVE_PROCEDURE, SCHEME_PAIR_POINTER } TypeTag;
 

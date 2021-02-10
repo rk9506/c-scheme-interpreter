@@ -2,7 +2,7 @@
 
 /* A generic hash-table largely cribbed from K&R */
 
-HashTable *make_table()
+HashTable *make_hash_table()
 {
     HashTable *table = malloc(sizeof(HashTable*));
     *table = calloc(HASH_SIZE, sizeof(struct TableEntry));
@@ -12,19 +12,19 @@ HashTable *make_table()
 
 void free_table_entry(struct TableEntry *entry)
 {
-    if (entry != 0)
+    if (entry != NULL)
     {
         free_table_entry(entry->next);
         free(entry);
     }
 }
 
-void free_table(HashTable *table)
+void free_hash_table(HashTable *table)
 {
     int i;
     for (i = 0; i < HASH_SIZE; i++)
     {
-        if (table[i] != 0)
+        if (table[i] != NULL)
         {
             free_table_entry(table[i]);
         }
@@ -33,7 +33,7 @@ void free_table(HashTable *table)
     free(table);
 }
 
-void print_table(HashTable *table)
+void print_hash_table(HashTable *table)
 {
     int i;
     for (i = 0; i < HASH_SIZE; i++)
@@ -57,7 +57,7 @@ unsigned hash(char *key)
     return hashval % HASH_SIZE;
 }
 
-struct TableEntry *lookup(char *key, HashTable *table)
+struct TableEntry *hash_lookup(char *key, HashTable *table)
 {
     struct TableEntry *e;
 
@@ -72,12 +72,12 @@ struct TableEntry *lookup(char *key, HashTable *table)
     return NULL; /* Not found */
 }
 
-struct TableEntry *insert(char *key, void *value, HashTable *table)
+struct TableEntry *hash_insert(char *key, void *value, HashTable *table)
 {
     struct TableEntry *e;
     unsigned hashval;
 
-    if ((e = lookup(key, table)) == NULL) { /* not found */
+    if ((e = hash_lookup(key, table)) == NULL) { /* not found */
         e = (struct TableEntry*) malloc(sizeof(*e));
 
         if (e == NULL || (e->key = strdup(key)) == NULL)

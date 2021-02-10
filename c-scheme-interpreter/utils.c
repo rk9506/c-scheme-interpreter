@@ -16,3 +16,9 @@ SchemeAtom *list_drop(SchemeAtom *l, int n)
 
     return list_drop(cdr(l), n - 1);
 }
+
+void throw_exception(char *message)
+{
+    printf("%s\n", message);
+    exit(1);
+}

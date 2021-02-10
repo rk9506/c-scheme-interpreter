@@ -79,9 +79,9 @@ void set_root(SchemeAtom *new_root)
 
 void initialise_eval()
 {
+    initialise_regs();
     initialise_heap();
     setup_global_environment();
-    initialise_regs();
     initialise_env();
     initialise_root();
 }

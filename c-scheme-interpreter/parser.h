@@ -14,8 +14,6 @@
 #include <stdlib.h>
 #include <ctype.h>
 
-SchemeAtom *parsing;
-
 SchemeAtom *generate_ast(char *exp);
 
 SchemeAtom *parse_list(char *tokens, char **save_ptr);

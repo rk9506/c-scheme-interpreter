@@ -12,24 +12,22 @@ bool is_null_list(SchemeAtom *list)
 
 SchemeAtom *make_atom()
 {
-    return malloc(sizeof(SchemeAtom));
+    SchemeAtom *atom = malloc(sizeof(SchemeAtom));
+    atom->val = NULL;
+
+    return atom;
 }
 
 void free_atom(SchemeAtom *atom)
 {
     if (atom == NULL) return;
 
-    free(atom);
-
-    if (atom->type_tag == SCHEME_PROCEDURE)
-    {
-        free(atom->val->proc);
-    }
-
     if (atom->val != NULL)
     {
-        free(atom->val);
+        // free(atom->val);
     }
+
+    free(atom);
 }
 
 SchemePrimitive *make_primitive()

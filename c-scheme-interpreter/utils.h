@@ -6,5 +6,6 @@
 
 unsigned int list_length(SchemeAtom *l);
 SchemeAtom *list_drop(SchemeAtom *l, int n);
+void throw_exception(char *message);
 
 #endif // __UTILS_H_
