@@ -8,7 +8,7 @@
 
 #include <stdlib.h>
 
-#define HEAP_SIZE 128
+#define HEAP_SIZE 1024 * 512
 
 SchemeAtom **the_cars;
 SchemeAtom **the_cdrs;
