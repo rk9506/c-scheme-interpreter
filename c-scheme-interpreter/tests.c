@@ -331,7 +331,7 @@ void run_test(char *title, char *input, char *expected)
     printf("\tInput: \t\t%s\n", input);
     printf("\tExpected: \t%s\n", expected);
 
-    initialise_eval();
+    initialise_runtime();
     SchemeAtom *ast = generate_ast(input);
     SchemeAtom *result = eval_exp(ast);
 

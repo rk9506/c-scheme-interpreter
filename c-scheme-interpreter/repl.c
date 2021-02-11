@@ -15,7 +15,7 @@ int main()
 
 int start_repl()
 {
-    initialise_eval();
+    initialise_runtime();
     // initialise_stack();
     return repl();
 }

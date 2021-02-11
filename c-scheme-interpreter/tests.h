@@ -4,6 +4,7 @@
 #include "parser.h"
 #include "printer.h"
 #include "eval.h"
+#include "runtime.h"
 
 #include <stdio.h>
 #include <unistd.h>

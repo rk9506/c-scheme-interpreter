@@ -6,6 +6,7 @@
 #include "eval.h"
 #include "env.h"
 #include "registers.h"
+#include "runtime.h"
 
 #include <stdio.h>
 
