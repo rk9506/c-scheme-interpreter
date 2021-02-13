@@ -74,6 +74,31 @@ char *get_string_car(SchemeAtom *args)
     return atom->val->str;
 }
 
+char *get_symbol_car(SchemeAtom *args)
+{
+    SchemeAtom *atom = car(args);
+
+    if (!is_symbol(atom))
+    {
+        printf("Argument must be a symbol\n");
+        return 0;
+    }
+
+    return atom->val->sym;
+}
+
+char *get_symbol_cadr(SchemeAtom *args)
+{
+    SchemeAtom *atom = car(cdr(args));
+
+    if (!is_symbol(atom))
+    {
+        printf("Argument must be a symbol\n");
+        return 0;
+    }
+
+    return atom->val->sym;
+}
 
 SchemeAtom *primitive_add(SchemeAtom *args)
 {
@@ -241,4 +266,12 @@ SchemeAtom *primitive_length(SchemeAtom *args)
     SchemeAtom *l = car(args);
 
     return make_number(list_length(l));
+}
+
+SchemeAtom *primitive_symbol_equality(SchemeAtom *args)
+{
+    char *first = get_symbol_car(args);
+    char *second = get_symbol_cadr(args);
+
+    return make_boolean(strcmp(first, second) == 0);
 }

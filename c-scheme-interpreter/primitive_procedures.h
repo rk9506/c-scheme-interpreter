@@ -40,4 +40,6 @@ SchemeAtom *primitive_list(SchemeAtom *args);
 SchemeAtom *primitive_is_null(SchemeAtom *args);
 SchemeAtom *primitive_length(SchemeAtom *args);
 
+SchemeAtom *primitive_symbol_equality(SchemeAtom *args);
+
 #endif // __PRIMITIVE_PROCEDURES_H_

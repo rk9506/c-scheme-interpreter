@@ -165,6 +165,9 @@ void add_primitive_procedures()
     define_primitive("list", &primitive_list);
     define_primitive("null?", &primitive_is_null);
     define_primitive("length", &primitive_length);
+
+    // Symbols
+    define_primitive("eq?", &primitive_symbol_equality);
 }
 
 void print_env(Environment *env)

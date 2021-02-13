@@ -97,6 +97,7 @@ void test_assignment()
 void test_primitive_procedures()
 {
     run_test("should be able to add with +", "(+ 1 2)", "3");
+    run_test("should be able to test symbol equality with eq?", "(eq? 'sym 'sym)", "#t");
 }
 
 void test_compound_procedures()
