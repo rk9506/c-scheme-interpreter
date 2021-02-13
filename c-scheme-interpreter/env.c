@@ -162,6 +162,13 @@ void add_primitive_procedures()
     define_primitive("cons", &primitive_cons);
     define_primitive("car", &primitive_car);
     define_primitive("cdr", &primitive_cdr);
+    define_primitive("cadr", &primitive_cadr);
+    define_primitive("cddr", &primitive_cddr);
+    define_primitive("caddr", &primitive_caddr);
+    define_primitive("cdadr", &primitive_cdadr);
+    define_primitive("cdddr", &primitive_cdddr);
+    define_primitive("cadddr", &primitive_cadddr);
+    define_primitive("cddddr", &primitive_cddddr);
     define_primitive("list", &primitive_list);
     define_primitive("null?", &primitive_is_null);
     define_primitive("length", &primitive_length);

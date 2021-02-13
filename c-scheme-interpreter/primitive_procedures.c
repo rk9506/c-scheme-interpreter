@@ -9,6 +9,11 @@ SchemeAtom *apply_primitive_procedure(SchemeAtom *proc_elem, SchemeAtom *args)
     return (*primitive_proc)(args);
 }
 
+SchemeAtom *primitive_apply_in_underlying_scheme(SchemeAtom *args)
+{
+    return apply_primitive_procedure(car(args), car(cdr(args)));
+}
+
 float get_number_car(SchemeAtom *args)
 {
     SchemeAtom *atom = car(args);
@@ -245,6 +250,56 @@ SchemeAtom *primitive_cdr(SchemeAtom *args)
     return cdr(pair);
 }
 
+SchemeAtom *primitive_cadr(SchemeAtom *args)
+{
+    SchemeAtom *pair = car(args);
+
+    return car(cdr(pair));
+}
+
+SchemeAtom *primitive_cddr(SchemeAtom *args)
+{
+    SchemeAtom *pair = car(args);
+
+    return cdr(cdr(pair));
+}
+
+SchemeAtom *primitive_caddr(SchemeAtom *args)
+{
+    SchemeAtom *pair = car(args);
+
+    return car(cdr(cdr(pair)));
+}
+
+SchemeAtom *primitive_cdadr(SchemeAtom *args)
+{
+    SchemeAtom *pair = car(args);
+
+    return cdr(car(cdr(pair)));
+}
+
+SchemeAtom *primitive_cdddr(SchemeAtom *args)
+{
+    SchemeAtom *pair = car(args);
+
+    return cdr(cdr(cdr(pair)));
+}
+
+SchemeAtom *primitive_cadddr(SchemeAtom *args)
+{
+    SchemeAtom *pair = car(args);
+
+    return car(cdr(cdr(cdr(pair))));
+}
+
+SchemeAtom *primitive_cddddr(SchemeAtom *args)
+{
+    SchemeAtom *pair = car(args);
+
+    return cdr(cdr(cdr(cdr(pair))));
+}
+
+
 SchemeAtom *primitive_list(SchemeAtom *args)
 {
     if (is_pair(args))
@@ -266,6 +321,25 @@ SchemeAtom *primitive_length(SchemeAtom *args)
     SchemeAtom *l = car(args);
 
     return make_number(list_length(l));
+}
+
+SchemeAtom *primitive_set_car(SchemeAtom *args)
+{
+    set_car(car(args), car(cdr(args)));
+    return make_symbol("ok");
+}
+
+SchemeAtom *primitive_set_cdr(SchemeAtom *args)
+{
+    set_cdr(car(args), car(cdr(args)));
+    return make_symbol("ok");
+}
+
+SchemeAtom *primitive_error(SchemeAtom *args)
+{
+    print_elem(args);
+    throw_exception("Scheme error!");
+    return NULL;
 }
 
 SchemeAtom *primitive_symbol_equality(SchemeAtom *args)

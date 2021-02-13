@@ -13,6 +13,8 @@ SchemeAtom *primitive_temp;
 
 SchemeAtom *apply_primitive_procedure(SchemeAtom *proc_elem, SchemeAtom *args);
 
+SchemeAtom *primitive_apply_in_underlying_scheme(SchemeAtom *args);
+
 SchemeAtom *primitive_add(SchemeAtom *args);
 SchemeAtom *primitive_subtract(SchemeAtom *args);
 SchemeAtom *primitive_multiply(SchemeAtom *args);
@@ -36,6 +38,14 @@ SchemeAtom *primitive_read(SchemeAtom *args);
 SchemeAtom *primitive_cons(SchemeAtom *args);
 SchemeAtom *primitive_car(SchemeAtom *args);
 SchemeAtom *primitive_cdr(SchemeAtom *args);
+SchemeAtom *primitive_cadr(SchemeAtom *args);
+SchemeAtom *primitive_cddr(SchemeAtom *args);
+SchemeAtom *primitive_caddr(SchemeAtom *args);
+SchemeAtom *primitive_cdadr(SchemeAtom *args);
+SchemeAtom *primitive_cdddr(SchemeAtom *args);
+SchemeAtom *primitive_cadddr(SchemeAtom *args);
+SchemeAtom *primitive_cddddr(SchemeAtom *args);
+
 SchemeAtom *primitive_list(SchemeAtom *args);
 SchemeAtom *primitive_is_null(SchemeAtom *args);
 SchemeAtom *primitive_length(SchemeAtom *args);
