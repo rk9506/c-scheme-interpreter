@@ -119,6 +119,9 @@ Environment *extend_environment(SchemeAtom *vars, SchemeAtom *vals, Environment 
     } else if (vars_length < vals_length)
     {
         printf("Too many arguments supplied\n");
+        print_elem(vars);
+        printf("\n");
+        print_elem(vals);
     } else
     {
         printf("Too few arguments supplied\n");
@@ -160,10 +163,15 @@ void add_primitive_procedures()
 
     // Lists
     define_primitive("cons", &primitive_cons);
+    define_primitive("set-car!", &primitive_set_car);
+    define_primitive("set-cdr!", &primitive_set_cdr);
     define_primitive("car", &primitive_car);
     define_primitive("cdr", &primitive_cdr);
     define_primitive("cadr", &primitive_cadr);
     define_primitive("cddr", &primitive_cddr);
+    define_primitive("caar", &primitive_caar);
+    define_primitive("cdar", &primitive_cdar);
+    define_primitive("caadr", &primitive_caadr);
     define_primitive("caddr", &primitive_caddr);
     define_primitive("cdadr", &primitive_cdadr);
     define_primitive("cdddr", &primitive_cdddr);
@@ -173,8 +181,20 @@ void add_primitive_procedures()
     define_primitive("null?", &primitive_is_null);
     define_primitive("length", &primitive_length);
 
+    // Type checking
+    define_primitive("symbol?", &primitive_is_symbol);
+    define_primitive("number?", &primitive_is_number);
+    define_primitive("pair?", &primitive_is_pair);
+    define_primitive("string?", &primitive_is_string);
+
     // Symbols
-    define_primitive("eq?", &primitive_symbol_equality);
+    define_primitive("eq?", &primitive_eq);
+
+    // Procedure application
+    define_primitive("apply-in-underlying-scheme", &primitive_apply_in_underlying_scheme);
+
+    // Error
+    define_primitive("error", &primitive_error);
 }
 
 void print_env(Environment *env)

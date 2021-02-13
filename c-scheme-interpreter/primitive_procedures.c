@@ -210,7 +210,15 @@ SchemeAtom *primitive_not(SchemeAtom *args)
 
 SchemeAtom *primitive_display(SchemeAtom *args)
 {
-    print_elem(car(args));
+    SchemeAtom *arg = car(args);
+    if (is_string(arg))
+    {
+        printf("%s", arg->val->str);
+    } else
+    {
+        print_elem(arg);
+    }
+
     return make_symbol("ok");
 }
 
@@ -264,6 +272,27 @@ SchemeAtom *primitive_cddr(SchemeAtom *args)
     return cdr(cdr(pair));
 }
 
+SchemeAtom *primitive_caar(SchemeAtom *args)
+{
+    SchemeAtom *pair = car(args);
+
+    return car(car(pair));
+}
+
+SchemeAtom *primitive_cdar(SchemeAtom *args)
+{
+    SchemeAtom *pair = car(args);
+
+    return cdr(car(pair));
+}
+
+SchemeAtom *primitive_caadr(SchemeAtom *args)
+{
+    SchemeAtom *pair = car(args);
+
+    return car(car(cdr(pair)));
+}
+
 SchemeAtom *primitive_caddr(SchemeAtom *args)
 {
     SchemeAtom *pair = car(args);
@@ -302,12 +331,12 @@ SchemeAtom *primitive_cddddr(SchemeAtom *args)
 
 SchemeAtom *primitive_list(SchemeAtom *args)
 {
-    if (is_pair(args))
+    if (is_null_list(args))
     {
-        return args;
+        return the_empty_list();
     } else
     {
-        return cons(args, the_empty_list());
+        return cons(car(args), primitive_list(cdr(args)));
     }
 }
 
@@ -348,4 +377,51 @@ SchemeAtom *primitive_symbol_equality(SchemeAtom *args)
     char *second = get_symbol_cadr(args);
 
     return make_boolean(strcmp(first, second) == 0);
+}
+
+SchemeAtom *primitive_boolean_equality(SchemeAtom *args)
+{
+    bool first = get_boolean_car(args);
+    bool second = get_boolean_cadr(args);
+
+    return make_boolean(first == second);
+}
+
+SchemeAtom *primitive_eq(SchemeAtom *args)
+{
+    SchemeAtom *first = car(args);
+    SchemeAtom *second = car(cdr(args));
+
+    if (is_symbol(first) && is_symbol(second))
+    {
+        return primitive_symbol_equality(args);
+    } else if (is_boolean(first) && is_boolean(second))
+    {
+        return primitive_boolean_equality(args);
+    } else if (is_null_list(first) && is_null_list(second))
+    {
+        return make_boolean(true);
+    }
+
+    return make_boolean(false);
+}
+
+SchemeAtom *primitive_is_symbol(SchemeAtom *args)
+{
+    return make_boolean(is_symbol(car(args)));
+}
+
+SchemeAtom *primitive_is_number(SchemeAtom *args)
+{
+    return make_boolean(is_number(car(args)));
+}
+
+SchemeAtom *primitive_is_pair(SchemeAtom *args)
+{
+    return make_boolean(is_pair(car(args)));
+}
+
+SchemeAtom *primitive_is_string(SchemeAtom *args)
+{
+    return make_boolean(is_string(car(args)));
 }

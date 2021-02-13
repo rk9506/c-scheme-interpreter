@@ -36,10 +36,15 @@ SchemeAtom *primitive_newline(SchemeAtom *args);
 SchemeAtom *primitive_read(SchemeAtom *args);
 
 SchemeAtom *primitive_cons(SchemeAtom *args);
+SchemeAtom *primitive_set_car(SchemeAtom *args);
+SchemeAtom *primitive_set_cdr(SchemeAtom *args);
 SchemeAtom *primitive_car(SchemeAtom *args);
 SchemeAtom *primitive_cdr(SchemeAtom *args);
 SchemeAtom *primitive_cadr(SchemeAtom *args);
 SchemeAtom *primitive_cddr(SchemeAtom *args);
+SchemeAtom *primitive_caar(SchemeAtom *args);
+SchemeAtom *primitive_cdar(SchemeAtom *args);
+SchemeAtom *primitive_caadr(SchemeAtom *args);
 SchemeAtom *primitive_caddr(SchemeAtom *args);
 SchemeAtom *primitive_cdadr(SchemeAtom *args);
 SchemeAtom *primitive_cdddr(SchemeAtom *args);
@@ -50,6 +55,13 @@ SchemeAtom *primitive_list(SchemeAtom *args);
 SchemeAtom *primitive_is_null(SchemeAtom *args);
 SchemeAtom *primitive_length(SchemeAtom *args);
 
-SchemeAtom *primitive_symbol_equality(SchemeAtom *args);
+SchemeAtom *primitive_eq(SchemeAtom *args);
+
+SchemeAtom *primitive_is_symbol(SchemeAtom *args);
+SchemeAtom *primitive_is_number(SchemeAtom *args);
+SchemeAtom *primitive_is_pair(SchemeAtom *args);
+SchemeAtom *primitive_is_string(SchemeAtom *args);
+
+SchemeAtom *primitive_error(SchemeAtom *args);
 
 #endif // __PRIMITIVE_PROCEDURES_H_

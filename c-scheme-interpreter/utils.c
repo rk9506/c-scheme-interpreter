@@ -1,5 +1,10 @@
 #include "utils.h"
 
+SchemeAtom *singleton_list(SchemeAtom *contents)
+{
+    return cons(contents, the_empty_list());
+}
+
 unsigned int list_length(SchemeAtom *l)
 {
     if (is_null_list(l)) return 0;
