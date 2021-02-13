@@ -222,7 +222,13 @@ SchemeAtom *primitive_cdr(SchemeAtom *args)
 
 SchemeAtom *primitive_list(SchemeAtom *args)
 {
-    return args;
+    if (is_pair(args))
+    {
+        return args;
+    } else
+    {
+        return cons(args, the_empty_list());
+    }
 }
 
 SchemeAtom *primitive_is_null(SchemeAtom *args)

@@ -10,3 +10,6 @@ repl: repl.c $(DEPS)
 
 tests: tests.c $(DEPS)
 	$(CC) tests.c $(DEPS) -o tests.o $(CFLAGS)
+
+compiled: compiled.c $(DEPS)
+	$(CC) compiled.c $(DEPS) -o compiled.o $(CFLAGS)

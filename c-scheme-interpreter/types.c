@@ -137,3 +137,8 @@ bool symbol_eq_str(SchemeAtom *symbol, char *str)
 {
     return is_symbol(symbol) && strcmp(symbol->val->sym, str) == 0;
 }
+
+bool is_false(SchemeAtom *atom)
+{
+    return is_boolean(atom) && !atom->val->boolean;
+}

@@ -11,6 +11,7 @@ void initialise_regs()
     regs->argl = the_empty_list();
     regs->proc = the_empty_list();
     regs->the_stack = the_empty_list();
+    regs->cont = NULL;
 }
 
 Registers *get_regs()

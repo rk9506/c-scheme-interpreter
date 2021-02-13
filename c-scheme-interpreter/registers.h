@@ -14,10 +14,12 @@ typedef struct
     SchemeAtom *val;
     SchemeAtom *proc;
     SchemeAtom *argl;
-    // void (*continue)();
     SchemeAtom *unev;
     SchemeAtom *the_stack;
     SchemeAtom *temp;
+    void *cont;
+    void *compapp;
+    bool flag;
 } Registers;
 
 Registers *regs;

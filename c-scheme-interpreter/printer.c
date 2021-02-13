@@ -20,6 +20,12 @@ void print_elem(SchemeAtom *elem)
     print_atom(elem);
 }
 
+void print_elem_line(SchemeAtom *elem)
+{
+    print_elem(elem);
+    printf("\n");
+}
+
 void print_atom(SchemeAtom *atom)
 {
     switch (atom->type_tag)
@@ -50,6 +56,10 @@ void print_atom(SchemeAtom *atom)
 
         case PRIMITIVE_PROCEDURE:
             printf("<primitive-procedure>");
+            break;
+
+        case COMPILED_PROCEDURE:
+            printf("<compiled-procedure>");
             break;
     }
 }

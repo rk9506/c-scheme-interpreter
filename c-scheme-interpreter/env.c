@@ -45,6 +45,11 @@ SchemeAtom *lookup_variable_value(char *name, Environment *env)
     return entry_value(e);
 }
 
+SchemeAtom *lookup_variable_value_sym(SchemeAtom *symbol, Environment *env)
+{
+    return lookup_variable_value(symbol->val->sym, env);
+}
+
 void set_variable_value(char *var, SchemeAtom *val, Environment *env)
 {
     if (is_null_list(env))
@@ -63,6 +68,11 @@ void set_variable_value(char *var, SchemeAtom *val, Environment *env)
     set_car(cdr(e), val);
 }
 
+void set_variable_value_sym(SchemeAtom *var, SchemeAtom *val, Environment *env)
+{
+    set_variable_value(var->val->sym, val, env);
+}
+
 void define_variable(char *var, SchemeAtom *val, Environment *env)
 {
     if (lookup(var, env_bindings(env)))
@@ -72,6 +82,11 @@ void define_variable(char *var, SchemeAtom *val, Environment *env)
     {
         set_bindings(env, insert(var, val, env_bindings(env)));
     }
+}
+
+void define_variable_sym(SchemeAtom *var, SchemeAtom *val, Environment *env)
+{
+    define_variable(var->val->sym, val, env);
 }
 
 Environment *make_environment()

@@ -6,6 +6,7 @@
 #include "types.h"
 #include "env.h"
 #include "registers.h"
+#include "parser.h"
 
 #include <stdlib.h>
 

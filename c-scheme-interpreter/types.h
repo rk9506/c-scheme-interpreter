@@ -15,13 +15,19 @@ typedef char* SchemeSymbol;
 // a pointer within our "Scheme virtual machine", as opposed to a C pointer
 typedef int SchemePairPointer;
 
-typedef enum { SCHEME_STRING, SCHEME_NUMBER, SCHEME_BOOLEAN, SCHEME_SYMBOL, SCHEME_PROCEDURE, PRIMITIVE_PROCEDURE, SCHEME_PAIR_POINTER } TypeTag;
+typedef enum { SCHEME_STRING, SCHEME_NUMBER, SCHEME_BOOLEAN, SCHEME_SYMBOL, SCHEME_PROCEDURE, PRIMITIVE_PROCEDURE, SCHEME_PAIR_POINTER, COMPILED_PROCEDURE } TypeTag;
 
 typedef struct SchemeAtom SchemeProcedure;
 
 // A primitive procedure is a function which takes a pointer
 // to a list of arguments, and returns a result as a SchemeAtom
 typedef struct SchemeAtom *(*PrimitiveProcedure)(struct SchemeAtom*);
+
+typedef struct
+{
+    void *entry;
+    struct SchemeAtom *env;
+} CompiledProcedure;
 
 typedef union
 {
@@ -32,6 +38,7 @@ typedef union
     SchemePairPointer pair;
     SchemeProcedure *proc;
     PrimitiveProcedure primitive_proc;
+    CompiledProcedure *compiled_proc;
 } SchemePrimitive;
 
 typedef struct SchemeAtom
@@ -59,6 +66,7 @@ bool is_string(SchemeAtom *atom);
 bool is_pair(SchemeAtom *atom);
 bool is_boolean(SchemeAtom *atom);
 bool is_compound_procedure(SchemeAtom *atom);
+bool is_false(SchemeAtom *atom);
 
 unsigned int list_length(SchemeAtom *l);
 

@@ -42,6 +42,9 @@ void display_heap_entry(SchemeAtom *atom)
         case PRIMITIVE_PROCEDURE:
             printf("<prim>");
             break;
+        case COMPILED_PROCEDURE:
+            printf("<compiled>");
+            break;
     }
 }
 

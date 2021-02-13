@@ -19,8 +19,11 @@ Environment *get_global_environment();
 void setup_global_environment();
 
 SchemeAtom *lookup_variable_value(char *name, Environment *env);
+SchemeAtom *lookup_variable_value_sym(SchemeAtom *symbol, Environment *env);
 void set_variable_value(char *var, SchemeAtom *val, Environment *env);
+void set_variable_value_sym(SchemeAtom *var, SchemeAtom *val, Environment *env);
 void define_variable(char *var, SchemeAtom *val, Environment *env);
+void define_variable_sym(SchemeAtom *var, SchemeAtom *val, Environment *env);
 
 Environment *make_environment();
 void free_environment(Environment *env);

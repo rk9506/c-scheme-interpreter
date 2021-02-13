@@ -22,3 +22,4 @@ void throw_exception(char *message)
     printf("%s\n", message);
     exit(1);
 }
+
